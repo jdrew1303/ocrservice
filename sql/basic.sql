@@ -1,7 +1,7 @@
 
 
 drop table ocrhash;
-create table ocrhash (ids varchar(255) primary key,adr text );
+create table ocrhash (ids varchar(255) primary key,adr text ) engine myisam;
 create fulltext index id_ft_hash on ocrhash(adr);
 
 
