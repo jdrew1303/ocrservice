@@ -2,6 +2,8 @@
 variables = require '../variables'
 cv = require 'opencv'
 {OCR} = require 'wocr'
+Extract = require './extract'
+DB = require '../classes/db'
 xocr = new OCR()
 xocr.Init variables.OCR_LANGUAGE
 
@@ -23,8 +25,9 @@ lengthRanking = (a,b) ->
 
 module.exports =
 class Regonizer extends EventEmitter
-  constructor: (fileName)->
-    @fileName = fileName
+
+  constructor: ()->
+
     @imageArea = 0
     @rectDebugIndex = 0
     @debug = false
@@ -37,11 +40,21 @@ class Regonizer extends EventEmitter
     @maxDisplayWidth = 600
     @barcodes = []
     @barcodesHash = {}
+    @texts = []
+    @addresses = []
+    @boxes = []
+    @extract = new Extract
+    @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
+    @db.setLimit 1
+    @db.on 'error', (err) ->
+      throw err
+
 
   setDebug: (mode)->
     @debug = mode
-  open: ()->
+  open: (fileName)->
     me = @
+    @fileName = fileName
     if @fileName
       cv.readImage @fileName, (err, im)->
         if err
@@ -73,9 +86,11 @@ class Regonizer extends EventEmitter
     rect  = item.rect
     @original.rectangle([rect.x,rect.y],[rect.width,rect.height],color,15)
     @rectDebugIndex++
-  show: ()->
+  show: (im)->
     win = new cv.NamedWindow "Debug", 0
     showImage = @original.clone()
+    if typeof im!='undefined'
+      showImage = im.clone()
     scale = 2
     while (showImage.width() > @maxDisplayWidth)
       showImage.resize showImage.width()/scale,showImage.height()/scale
@@ -97,15 +112,11 @@ class Regonizer extends EventEmitter
     xocr.SetMatrix cropped
     imagecodes = xocr.GetBarcode()
     (@appendBarcodes codes for codes in imagecodes)
-
-  barcode: (sep)->
-    if typeof @image == 'undefined'
-      @emit 'error', new Error('the image is not loaded')
-
-    im_canny = @image.copy()
-    im_canny.normalize 0,255
+  contours: (im_canny)->
     im_canny.canny @lowThresh, @highThresh
     im_canny.dilate @nIters
+    if @debug
+      @show im_canny
     im_canny.canny @lowThresh, @highThresh
     contours = im_canny.findContours()
     sorts = []
@@ -126,9 +137,72 @@ class Regonizer extends EventEmitter
 
       i++
     sorts.sort contourRanking
+
+  barcode: (sep)->
+    if typeof @image == 'undefined'
+      @emit 'error', new Error('the image is not loaded')
+    im_canny = @image.copy()
+    im_canny.normalize 0,255
+    sorts = @contours im_canny
     sorts = @removeDoubleRect sorts
     if @debug
       (@drawRect item for item in sorts)
       @show()
     (@getBarcode item for item in sorts)
     @barcodes
+
+  getAddress: (item)->
+    adr = @extract.extractAddress item
+    if adr.state
+      @addresses.push adr
+    adr
+
+  getText: (item)->
+    r = item.rect
+    cropped = @image.crop r.x,r.y,r.width,r.height
+    xocr.SetMatrix cropped
+    txt = xocr.GetText()
+    @texts.push txt
+
+  text: ()->
+    if typeof @image == 'undefined'
+      @emit 'error', new Error('the image is not loaded')
+    im_canny = @image.copy()
+    im_canny.normalize 0,255
+    sorts = @contours im_canny
+    sorts = @removeDoubleRect sorts
+    if @debug
+      (@drawRect item for item in sorts)
+      @show()
+    (@getText item for item in sorts)
+    (@getAddress item for item in @texts)
+    @addresses
+
+  checkFindSortboxCounter: ()->
+    me = @
+    me.findSortboxCounter--
+    if me.findSortboxCounter == 0
+      me.emit 'boxes', me.boxes,me.barcodes
+
+  findSortbox: (item)->
+    me = @
+    searchtext = item.street+', '+item.zipCode+' '+item.town
+    housenumber= item.housenumber
+    @db.once 'sortbox', (res) ->
+      info =
+        box: res
+        item: item
+      me.boxes.push info
+      me.checkFindSortboxCounter()
+    @db.once 'ocrhash', (res) ->
+      if res.length>0
+        me.db.findSortbox res[0].ids, housenumber
+      else
+        me.checkFindSortboxCounter()
+    @db.findText searchtext
+
+  sortbox: ()->
+    @text()
+    @findSortboxCounter = @addresses.length+1
+    @checkFindSortboxCounter()
+    (@findSortbox item for item in @addresses)

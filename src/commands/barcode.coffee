@@ -15,10 +15,10 @@ class Barcode extends Command
 
     """
   action: (program,options) ->
-    regonizer = new Regonizer options.filename
+    regonizer = new Regonizer
     regonizer.setDebug program.debug||false
     regonizer.on 'error', (err) ->
       throw err
     regonizer.on 'open', (res) ->
       console.log regonizer.barcode()
-    regonizer.open()
+    regonizer.open options.filename

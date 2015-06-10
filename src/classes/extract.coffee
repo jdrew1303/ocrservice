@@ -19,9 +19,9 @@ class Extract extends EventEmitter
       housenumber: "1"
       housenumberExtension: ""
       flatNumber: ""
-    if /(\d)/.test(matches[2])
+    if matches? and /(\d)/.test(matches[2])
       result.street = matches[1].trim()
-      result.housenumber = matches[2].trim()
+      result.housenumber = matches[2].trim().replace(/\s/g,"")
       if result.housenumber.indexOf("/") > -1
         result.flatNumber = result.housenumber.substring result.housenumber.indexOf("/")+1
         result.housenumber = result.housenumber.substring 0, result.housenumber.indexOf("/")
@@ -66,6 +66,7 @@ class Extract extends EventEmitter
           if textLines[i].trim() != ''
             p =  textLines[i].trim().split(' ')
             break
+          i--
         i--
         nameLines = []
         while i >= 0
@@ -76,7 +77,7 @@ class Extract extends EventEmitter
           i--
         result.name = nameLines.reverse().join(' ')
         extract = @extractHousenumber p.join(' ')
-        result.street = extract.street
+        result.street = extract.street.replace(/\.$/,'').replace(/stn$/,'str')
         result.housenumber = extract.housenumber
         result.housenumberExtension = extract.housenumberExtension
         result.flatNumber = extract.flatNumber
