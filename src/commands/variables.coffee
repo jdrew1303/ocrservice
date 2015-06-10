@@ -10,5 +10,5 @@ class Variables extends Command
     """
 
     """
-  action: (options) ->
+  action: (program,options) ->
     console.log variables

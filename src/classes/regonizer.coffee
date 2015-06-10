@@ -3,6 +3,9 @@
 module.exports =
 class Regonizer extends EventEmitter
   constructor: ()->
+    @lineseparator = "\n"
+  setLineSeparator: (sep)->
+    @lineseparator = sep
   extractHousenumber: (str)->
     regexp = /([^\d]+)\s?(.+)/
     matches = str.match(regexp)
@@ -24,4 +27,53 @@ class Regonizer extends EventEmitter
         result.housenumber = parseInt(result.housenumber)+""
         result.housenumberExtension = tmp.replace result.housenumber,""
         result.housenumberExtension = result.housenumberExtension.trim()
+    result
+  extractAddress: (str)->
+    result =
+      name: ""
+      street: ""
+      housenumber: ""
+      housenumberExtension: ""
+      flatNumber: ""
+      zipCode: ""
+      town: ""
+      state: false
+      message: "missing zip code"
+    matches = str.match(/\b\d{5}\b/g)
+    textLines = str.split @lineseparator
+    if matches?
+      result.zipCode = matches[matches.length-1]
+      i = textLines.length - 1
+      found = false
+      while i>0
+        if textLines[i].indexOf( result.zipCode )>= 0
+          found=true
+          break
+        i--
+      result.message = "found zip code"
+      if found and i>0
+        result.town = textLines[i].replace(result.zipCode,'').trim()
+        result.message = "found town"
+        p = []
+        i--
+        while i >= 0
+          if textLines[i].trim() != ''
+            p =  textLines[i].trim().split(' ')
+            break
+        i--
+        nameLines = []
+        while i >= 0
+          if textLines[i].trim() != ''
+            nameLines.push  textLines[i].trim()
+          if nameLines.length == 2
+            break
+          i--
+        result.name = nameLines.reverse().join(' ')
+        extract = @extractHousenumber p.join(' ')
+        result.street = extract.street
+        result.housenumber = extract.housenumber
+        result.housenumberExtension = extract.housenumberExtension
+        result.flatNumber = extract.flatNumber
+        result.message = "all data extracted"
+        result.state = true
     result

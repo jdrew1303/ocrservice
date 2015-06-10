@@ -3,10 +3,11 @@ child_process = require 'child_process'
 module.exports =
 class Command
   @commandArgs: []
+  @options: []
   @help: () ->
     """
     """
-  action: (options) ->
+  action: (program,options) ->
     console.log options
   spawn: (cmd,args,remaining...) ->
     options = remaining.shift() if remaining.length >= 2

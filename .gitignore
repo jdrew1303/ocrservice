@@ -1,1 +1,3 @@
 node_modules
+bin/ocrservice.old
+lib.old/variables.js

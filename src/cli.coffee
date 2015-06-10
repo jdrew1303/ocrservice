@@ -15,31 +15,32 @@ module.exports.main = (cmdName) ->
       if command.commandName == cmdName
         cmd = command
     if cmd?
+      (program.option(op.parameter,op.description) for op in cmd.options)
       opts = []
       (opts.push('<'+op+'>') for op in cmd.commandArgs)
       if opts.length==0
         c = new cmd()
-        c.action()
+        c.action(program)
       else
         program.arguments(opts.join(' ')).action  (a0,a1,a2,a3,a4,a5) ->
-          options = {}
+          arg = {}
           index = 0
           for name in cmd.commandArgs
             if index == 0
-              options[name]= a0
+              arg[name]= a0
             if index == 1
-              options[name]= a1
+              arg[name]= a1
             if index == 2
-              options[name]= a2
+              arg[name]= a2
             if index == 3
-              options[name]= a3
+              arg[name]= a3
             if index == 4
-              options[name]= a4
+              arg[name]= a4
             if index == 5
-              options[name]= a5
+              arg[name]= a5
             index++
           c = new cmd()
-          c.action options
+          c.action program,arg
         program.on '--help', () ->
           console.log cmd.help()
           console.log ""
