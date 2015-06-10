@@ -1,11 +1,16 @@
 {EventEmitter} = require 'events'
 
+# extracting address data from a given string
 module.exports =
 class Extract extends EventEmitter
   constructor: ()->
+    # by default lines will be splited by the new line character
     @lineseparator = "\n"
+  # you can change the separator with `setLineSeparator`
   setLineSeparator: (sep)->
     @lineseparator = sep
+  # return an object of street and housnumber data
+  # number additionals and flat numbers are supported
   extractHousenumber: (str)->
     regexp = /([^\d]+)\s?(.+)/
     matches = str.match(regexp)
@@ -28,6 +33,7 @@ class Extract extends EventEmitter
         result.housenumberExtension = tmp.replace result.housenumber,""
         result.housenumberExtension = result.housenumberExtension.trim()
     result
+  # return an object of all address items including housenumber parts
   extractAddress: (str)->
     result =
       name: ""
