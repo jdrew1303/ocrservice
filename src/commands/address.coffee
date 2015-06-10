@@ -1,6 +1,6 @@
 Command = require './command'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Extract = require '../classes/extract'
 
 module.exports =
 class Address extends Command
@@ -17,6 +17,6 @@ class Address extends Command
     """
   action: (program,options) ->
 
-    regonizer = new Regonizer
-    regonizer.setLineSeparator program.separator||"\n"
-    console.log regonizer.extractAddress(options.address)
+    extract = new Extract
+    extract.setLineSeparator program.separator||"\n"
+    console.log extract.extractAddress(options.address)

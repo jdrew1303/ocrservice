@@ -1,6 +1,6 @@
 Command = require './command'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Extract = require '../classes/extract'
 
 module.exports =
 class Housenumber extends Command
@@ -13,5 +13,5 @@ class Housenumber extends Command
 
     """
   action: (program,options) ->
-    regonizer = new Regonizer
-    console.log regonizer.extractHousenumber(options.streetline)
+    extract = new Extract
+    console.log extract.extractHousenumber(options.streetline)
