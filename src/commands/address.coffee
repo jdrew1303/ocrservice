@@ -1,22 +1,24 @@
 Command = require './command'
 variables = require '../variables'
-Extract = require '../classes/extract'
+Regonizer = require '../classes/regonizer'
 
 module.exports =
 class Address extends Command
   @commandName: 'address'
-  @commandArgs: ['address']
+  @commandArgs: ['filename']
   @options: [
-    {parameter: "-l,--limit [limit]", description: "the result limit, default is 1"},
-    {parameter: "-s,--separator [separator]", description: "the result limit, default is 1"}
+    {parameter: "-d,--debug", description: "enable debug mode"},
   ]
-  @commandShortDescription: 'extract the address from a given string'
+  @commandShortDescription: 'extract the address from a given image file'
   @help: () ->
     """
 
     """
   action: (program,options) ->
-
-    extract = new Extract
-    extract.setLineSeparator program.separator||"\n"
-    console.log extract.extractAddress(options.address)
+    regonizer = new Regonizer options.filename
+    regonizer.setDebug program.debug||false
+    regonizer.on 'error', (err) ->
+      throw err
+    regonizer.on 'open', (res) ->
+      console.log regonizer.address()
+    regonizer.open()
