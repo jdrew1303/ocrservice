@@ -18,10 +18,23 @@ colorList = [
   [100, 155, 155]
 ]
 contourRanking = (a,b) ->
-  ( a.abs < b.abs )?1: ( ( a.abs > b.abs )?-1:0 )
+  if a.abs > b.abs
+    1
+  else if a.abs < b.abs
+    -1
+  else
+    0
+
+  #( a.abs < b.abs )?1: ( ( a.abs > b.abs )?-1:0 )
 
 lengthRanking = (a,b) ->
-  ( a.length < b.length )?1: ( ( a.length > b.length )?-1:0 )
+  if a.length < b.length
+    1
+  else if a.length > b.length
+    -1
+  else
+    0
+  #  ( a.length < b.length )?1: ( ( a.length > b.length )?-1:0 )
 
 module.exports =
 class Regonizer extends EventEmitter
@@ -43,7 +56,7 @@ class Regonizer extends EventEmitter
     @boxes = []
     @extract = new Extract
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
-    @db.setLimit 1
+    @db.setLimit 100
     @db.on 'error', (err) ->
       throw err
 
@@ -211,7 +224,7 @@ class Regonizer extends EventEmitter
     me = @
     me.findSortboxCounter--
     if me.findSortboxCounter == 0
-      me.emit 'boxes', me.boxes,me.barcodes
+      me.emit 'boxes', me.boxes.slice(0,1),me.barcodes
 
   findSortbox: (item)->
     me = @

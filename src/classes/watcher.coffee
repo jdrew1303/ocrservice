@@ -129,7 +129,7 @@ class Watcher extends EventEmitter
             sortresult: res[0].box
 
           if me.debug
-            me.io.emit 'new_debug',data
+            me.io.emit 'new',data
           else
             me.io.emit 'new',data
 
