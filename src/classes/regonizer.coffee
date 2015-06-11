@@ -39,7 +39,7 @@ lengthRanking = (a,b) ->
 module.exports =
 class Regonizer extends EventEmitter
 
-  constructor: ()->
+  constructor: (db)->
 
     @imageArea = 0
     @rectDebugIndex = 0
@@ -55,10 +55,14 @@ class Regonizer extends EventEmitter
     @addresses = []
     @boxes = []
     @extract = new Extract
-    @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
-    @db.setLimit 100
-    @db.on 'error', (err) ->
-      throw err
+
+    if typeof db!='undefined'
+      @db = db
+    else
+      @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
+      @db.setLimit 100
+      @db.on 'error', (err) ->
+        throw err
 
 
   setDebug: (mode)->

@@ -5,6 +5,7 @@ glob = require 'glob'
 socket = require 'socket.io-client'
 variables = require '../variables'
 Regonizer = require '../classes/regonizer'
+DB = require '../classes/db'
 
 # watching a directory for new files
 module.exports =
@@ -21,6 +22,10 @@ class Watcher extends EventEmitter
     @io.on 'start', @start.bind(@)
     @io.on 'stop', @stop.bind(@)
     #regonizer.setDebug program.debug||false
+    @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
+    @db.setLimit 100
+    @db.on 'error', (err) ->
+      throw err
 
   socketConnected: ()->
     me = @
@@ -160,7 +165,7 @@ class Watcher extends EventEmitter
       if stat.ctime < now
         me.current_stat = stat
         me.debugMessage 'regonize'
-        regonizer = new Regonizer
+        regonizer = new Regonizer me.db
         regonizer.setDebug me.debug
         regonizer.on 'error', (err) ->
           throw err
