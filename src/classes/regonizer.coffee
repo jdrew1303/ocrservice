@@ -31,9 +31,7 @@ class Regonizer extends EventEmitter
     @imageArea = 0
     @rectDebugIndex = 0
     @debug = false
-    @lowThresh = parseInt variables.OCR_CANNY_THRESH_LOW
-    @highThresh = parseInt variables.OCR_CANNY_THRESH_HIGH
-    @nIters = parseInt variables.OCR_NITERS
+
     @relativeAreaMinimum = parseFloat variables.OCR_RELATIVEAREAMINIMUM
     @relativeAreaMaximum = parseFloat variables.OCR_RELATIVEAREAMAXIMUM
     @codeBlockRatio = parseFloat variables.OCR_CODE_BLOCK_RATIO
@@ -63,8 +61,17 @@ class Regonizer extends EventEmitter
           im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
           me.imageArea = im.width() * im.height()
           me.original = im.clone()
-          im.convertGrayscale()
-          me.image = im
+
+
+
+
+          me.barcode_image = im.clone()
+          me.barcode_image.convertGrayscale()
+
+          me.image = im.clone()
+          me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
+          me.image.convertGrayscale()
+
           me.emit 'open', true
     else
       me.emit 'error', new Error('there is no image')
@@ -84,18 +91,19 @@ class Regonizer extends EventEmitter
     i = @rectDebugIndex%colorList.length
     color = colorList[i]
     rect  = item.rect
-    @original.rectangle([rect.x,rect.y],[rect.width,rect.height],color,15)
+    @contourImage.rectangle([rect.x,rect.y],[rect.width,rect.height],color,15)
     @rectDebugIndex++
+
   show: (im)->
-    win = new cv.NamedWindow "Debug", 0
-    showImage = @original.clone()
-    if typeof im!='undefined'
+    if parseInt(variables.OCR_DEBUG_WINDOW)==1
+      win = new cv.NamedWindow "Debug", 0
       showImage = im.clone()
-    scale = 2
-    while (showImage.width() > @maxDisplayWidth)
-      showImage.resize showImage.width()/scale,showImage.height()/scale
-    win.show showImage
-    win.blockingWaitKey 0
+      scale = 2
+
+      while (showImage.width() > @maxDisplayWidth)
+        showImage.resize showImage.width()/scale,showImage.height()/scale
+      win.show showImage
+      win.blockingWaitKey parseInt(variables.OCR_DEBUG_WINDOW_TIMEOUT)
 
   appendBarcodes: (item)->
     code = item.code
@@ -112,12 +120,19 @@ class Regonizer extends EventEmitter
     xocr.SetMatrix cropped
     imagecodes = xocr.GetBarcode()
     (@appendBarcodes codes for codes in imagecodes)
-  contours: (im_canny)->
-    im_canny.canny @lowThresh, @highThresh
-    im_canny.dilate @nIters
+
+  contours: (im_canny,lowThresh,highThresh,nIters)->
+
+    im_canny.canny lowThresh, highThresh
     if @debug
       @show im_canny
-    im_canny.canny @lowThresh, @highThresh
+    im_canny.dilate nIters
+    if @debug
+      @show im_canny
+    im_canny.canny lowThresh, highThresh
+    if @debug
+      @show im_canny
+
     contours = im_canny.findContours()
     sorts = []
     i = 0
@@ -139,15 +154,16 @@ class Regonizer extends EventEmitter
     sorts.sort contourRanking
 
   barcode: (sep)->
-    if typeof @image == 'undefined'
+    if typeof @barcode_image == 'undefined'
       @emit 'error', new Error('the image is not loaded')
-    im_canny = @image.copy()
-    im_canny.normalize 0,255
-    sorts = @contours im_canny
+    im_canny = @barcode_image.copy()
+    im_canny.normalize parseInt(variables.OCR_BC_MIN_NORMALIZE),255
+    @contourImage = @original.clone()
+    sorts = @contours im_canny, parseInt(variables.OCR_BC_CANNY_THRESH_LOW), parseInt(variables.OCR_BC_CANNY_THRESH_HIGH), parseInt( variables.OCR_BC_NITERS )
     sorts = @removeDoubleRect sorts
     if @debug
       (@drawRect item for item in sorts)
-      @show()
+      @show(@contourImage)
     (@getBarcode item for item in sorts)
     @barcodes
 
@@ -160,21 +176,34 @@ class Regonizer extends EventEmitter
   getText: (item)->
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
+
+    cropped.normalize parseInt(variables.OCR_CROPPED_TEXT_MIN_NORMALIZE),parseInt(variables.OCR_CROPPED_TEXT_MAX_NORMALIZE)
+    cropped.brightness  parseFloat(variables.OCR_CROPPED_TEXT_CONTRAST), parseInt(variables.OCR_CROPPED_TEXT_BIGHTNESS)
+
+    if @debug
+      @show cropped
+
+
     xocr.SetMatrix cropped
+    if @debug
+      @show cropped
     txt = xocr.GetText()
     @texts.push txt
+
 
   text: ()->
     if typeof @image == 'undefined'
       @emit 'error', new Error('the image is not loaded')
+
     im_canny = @image.copy()
-    im_canny.normalize 0,255
-    sorts = @contours im_canny
+    im_canny.normalize parseInt(variables.OCR_TEXT_MIN_NORMALIZE),255
+    @contourImage = @original.clone()
+    sorts = @contours im_canny, parseInt(variables.OCR_TEXT_CANNY_THRESH_LOW), parseInt(variables.OCR_TEXT_CANNY_THRESH_HIGH),parseInt( variables.OCR_TEXT_NITERS )
     sorts = @removeDoubleRect sorts
     if @debug
       (@drawRect item for item in sorts)
-      @show()
-    (@getText item for item in sorts)
+      @show(@contourImage)
+    (@getText(item) for item in sorts)
     (@getAddress item for item in @texts)
     @addresses
 

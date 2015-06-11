@@ -20,5 +20,6 @@ class Address extends Command
     regonizer.on 'error', (err) ->
       throw err
     regonizer.on 'open', (res) ->
+      console.log regonizer.barcode()
       console.log regonizer.text()
     regonizer.open options.filename

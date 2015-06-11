@@ -108,7 +108,7 @@ class Watcher extends EventEmitter
       if res.length == 0
         if codes.length == 0
           #no code, and address
-          name = stat.ctime.getTime()
+          name = me.current_stat.ctime.getTime()
           fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
             if err
               me.emit 'error', err
@@ -127,9 +127,13 @@ class Watcher extends EventEmitter
             codes: codes,
             item: res[0].item,
             sortresult: res[0].box
-          me.io.emit 'new',data
 
-      console.log JSON.stringify(res,null,2),codes
+          if me.debug
+            me.io.emit 'new_debug',data
+          else
+            me.io.emit 'new',data
+
+      me.debugMessage JSON.stringify(res,null,2),codes
       me.debugMessage 'next'
       me.nextFile.bind(me)()
 
@@ -142,14 +146,16 @@ class Watcher extends EventEmitter
       now.setSeconds now.getSeconds() - 1
 
       if stat.ctime < now
+        me.current_stat = stat
         me.debugMessage 'regonize'
         regonizer = new Regonizer
-        regonizer.once 'error', (err) ->
+        regonizer.setDebug me.debug
+        regonizer.on 'error', (err) ->
           throw err
-        regonizer.once 'open', (res) ->
+        regonizer.on 'open', (res) ->
           regonizer.barcode()
           regonizer.sortbox()
-        regonizer.once 'boxes', me.regonizeBoxes.bind(me)
+        regonizer.on 'boxes', me.regonizeBoxes.bind(me)
         regonizer.open path.join(me.pathName, me.files[me.fileIndex])
       else
         me.debugMessage 'file is too young'
