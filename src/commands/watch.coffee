@@ -15,9 +15,11 @@ class Sortbox extends Command
 
     """
   action: (program,options) ->
-    watcher = new Watcher options.pathname
+    watcher = new Watcher
     watcher.setDebug program.debug||false
     watcher.on 'error', (err) ->
       throw err
     watcher.on 'running', (res) ->
       console.log 'the service is running'
+    watcher.setPath options.pathname
+    #watcher.start()
