@@ -19,12 +19,12 @@ class DB extends EventEmitter
       user     : db_user
       database : db_name
       password : db_password
-    @limit = 100
+    @limit = 10000
     @connection = mysql.createConnection options
   stop: () ->
     @connection.end()
   setLimit: (number)->
-    @limit = parseInt number
+    @limit = 10000 # parseInt number
   padLeft: (txt,length)->
     txt="0"+txt while txt.length < length
     txt
@@ -50,7 +50,7 @@ class DB extends EventEmitter
         (row.distance = m.getEditDistance(row.adr,txt) for row in rows)
 
         rows.sort distanceRanking
-        
+        #console.log rows
         m.emit 'ocrhash', rows
 
 

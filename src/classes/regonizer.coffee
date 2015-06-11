@@ -120,12 +120,13 @@ class Regonizer extends EventEmitter
 
   appendBarcodes: (item)->
     code = item.code
-    if item.type == 'I2/5'
-      code = item.code.substring(0,item.code.length-1)
+    if code.indexOf('http://')==-1
+      if item.type == 'I2/5'
+        code = item.code.substring(0,item.code.length-1)
 
-    if typeof @barcodesHash[ code ] == 'undefined'
-      @barcodesHash[ code ] = item.type
-      @barcodes.push item.code.substring(0,item.code.length-1)
+      if typeof @barcodesHash[ code ] == 'undefined'
+        @barcodesHash[ code ] = item.type
+        @barcodes.push item.code.substring(0,item.code.length-1)
 
   getBarcode: (item)->
     r = item.rect
@@ -226,21 +227,45 @@ class Regonizer extends EventEmitter
     (@getAddress item for item in @texts)
     @addresses
 
+  reduceResult: ()->
+    me = @
+    result = []
+    resHash = []
+    for address in me.addresses
+      c = JSON.stringify address.box,null,0
+      if resHash.indexOf(c)==-1
+        result.push address
+        resHash.push c
+    result
+
+  fixResult: (res,codes)->
+    result = []
+    for item in res
+      item.codes = codes
+      item.ocr_street = item.street
+      item.ocr_zipCode = item.zipCode
+      item.ocr_town = item.town
+      if item.box
+        item.street = item.box[0].strasse
+        item.zipCode = item.box[0].plz
+        item.town = item.box[0].ort
+        item.district = item.box[0].ortsteil
+      result.push item
+    result
+
   checkFindSortboxCounter: ()->
     me = @
     me.findSortboxCounter--
     if me.findSortboxCounter == 0
-      me.emit 'boxes', me.boxes.slice(0,1),me.barcodes
+
+      me.emit 'boxes', me.fixResult(me.reduceResult(),me.barcodes) ,me.barcodes
 
   findSortbox: (item)->
     me = @
     searchtext = item.street+', '+item.zipCode+' '+item.town
     housenumber= item.housenumber
     @db.once 'sortbox', (res) ->
-      info =
-        box: res
-        item: item
-      me.boxes.push info
+      item.box = res
       me.checkFindSortboxCounter()
     @db.once 'ocrhash', (res) ->
       if res.length>0

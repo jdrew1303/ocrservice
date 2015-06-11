@@ -103,44 +103,51 @@ class Watcher extends EventEmitter
     if not @run
       false
     else
+
       me.debugMessage 'regonizeBoxes'
       file = path.join(me.pathName, me.files[me.fileIndex])
-      if res.length == 0
-        if codes.length == 0
-          #no code, and address
-          name = me.current_stat.ctime.getTime()
-          fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
-            if err
-              me.emit 'error', err
-        else
+      if codes.length == 0
+        #no code
+        name = me.current_stat.ctime.getTime()
+        fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
+          if err
+            me.emit 'error', err
+
+      else
+        if res.length == 0
           #no address
           name = codes.join('.')
           fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
             if err
+              console.trace err
               me.emit 'error', err
-      else
-        if codes.length==0
-          console.log 'something went wrong',file
-          process.exit()
-        name = codes.join('.')
 
-        fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
-          if err
-            me.emit 'error', err
 
-          data =
-            codes: codes,
-            item: res[0].item,
-            sortresult: res[0].box[0]
+        else if res.length == 1
 
-          if me.debug
-            me.io.emit 'new',data
-          else
-            me.io.emit 'new',data
+          name = res[0].codes.join('.')
+          console.log(file, path.join(me.pathName, 'good', name+path.extname(file)))
+          fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
+            if err
+              console.trace err
+              me.emit 'error', err
+            else
+              me.io.emit 'new',res[0]
 
-      me.debugMessage JSON.stringify([res,codes],null,2)
+        else
+          name = res[0].codes.join('.')
+
+          fs.rename file, path.join(me.pathName, 'unclear', name+path.extname(file)), (err) ->
+            if err
+              console.trace err
+              me.emit 'error', err
+          fs.writeFile path.join(me.pathName, 'unclear', name+'.txt'), JSON.stringify(res,null,2) , (err) ->
+            if err
+              me.emit 'error', err
+
+      me.debugMessage JSON.stringify(res,null,2)
       me.debugMessage 'next'
-      me.nextFile.bind(me)()
+      setTimeout me.nextFile.bind(me), 1
 
   statFile: (err,stat)->
     me = @
