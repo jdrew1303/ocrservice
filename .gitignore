@@ -1,3 +1,4 @@
 node_modules
 bin/ocrservice.old
+lib.old
 lib.old/variables.js

@@ -16,7 +16,7 @@ class Sortbox extends Command
     """
   action: (program,options) ->
     watcher = new Watcher
-    watcher.setDebug program.debug||false
+    watcher.setDebug program.debug
     watcher.on 'error', (err) ->
       throw err
     watcher.on 'running', (res) ->

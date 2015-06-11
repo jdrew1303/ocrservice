@@ -25,6 +25,7 @@ class Watcher extends EventEmitter
   socketConnected: ()->
     me = @
     me.debugMessage 'socket connected'
+    me.io.emit 'ocrservice', me.pathName
 
   socketDisconnected: ()->
     me = @
@@ -81,99 +82,106 @@ class Watcher extends EventEmitter
 
   watch: ()->
     me = @
-    options =
-      cwd: me.pathName
-    pattern = variables.OCR_WATCH_PATTERN
-    glob pattern, options, (err,matches) ->
-      if err
-        me.emit 'error',err
-      else
-        me.files = matches
-        me.fileIndex = 0
-        me.debugMessage(me.files .length,'files')
-        me.runList()
+    if not @run
+      false
+    else
+      options =
+        cwd: me.pathName
+      pattern = variables.OCR_WATCH_PATTERN
+      glob pattern, options, (err,matches) ->
+        if err
+          me.emit 'error',err
+        else
+          me.files = matches
+          me.fileIndex = 0
+          me.debugMessage(me.files .length,'files')
+          me.runList()
 
   regonizeBoxes: (res,codes)->
 
     me = @
     if not @run
-      me
-
-    me.debugMessage 'regonizeBoxes'
-    file = path.join(me.pathName, me.files[me.fileIndex])
-    if res.length == 0
-      if codes.length == 0
-        #no code, and address
-        name = stat.ctime.getTime()
-        fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
-          if err
-            me.emit 'error', err
-      else
-        #no address
-        name = codes.join('.')
-        fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
-          if err
-            me.emit 'error', err
+      false
     else
-      name = codes.join('.')
-      fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
-        if err
-          me.emit 'error', err
-        data =
-          codes: codes,
-          item: res[0].item,
-          sortresult: res[0].box
-        me.io.emit 'new',data
+      me.debugMessage 'regonizeBoxes'
+      file = path.join(me.pathName, me.files[me.fileIndex])
+      if res.length == 0
+        if codes.length == 0
+          #no code, and address
+          name = stat.ctime.getTime()
+          fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
+            if err
+              me.emit 'error', err
+        else
+          #no address
+          name = codes.join('.')
+          fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
+            if err
+              me.emit 'error', err
+      else
+        name = codes.join('.')
+        fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
+          if err
+            me.emit 'error', err
+          data =
+            codes: codes,
+            item: res[0].item,
+            sortresult: res[0].box
+          me.io.emit 'new',data
 
-    console.log JSON.stringify(res,null,2),codes
-    me.debugMessage 'next'
-    me.nextFile.bind(me)()
+      console.log JSON.stringify(res,null,2),codes
+      me.debugMessage 'next'
+      me.nextFile.bind(me)()
 
   statFile: (err,stat)->
     me = @
     if not @run
-      me
-    now = new Date
-    now.setSeconds now.getSeconds() - 1
-
-    if stat.ctime < now
-      me.debugMessage 'regonize'
-      regonizer = new Regonizer
-      regonizer.once 'error', (err) ->
-        throw err
-      regonizer.once 'open', (res) ->
-        regonizer.barcode()
-        regonizer.sortbox()
-      regonizer.once 'boxes', me.regonizeBoxes.bind(me)
-      regonizer.open path.join(me.pathName, me.files[me.fileIndex])
+      false
     else
-      me.debugMessage 'file is too young'
-      setTimeout me.nextFile.bind(me), 500
+      now = new Date
+      now.setSeconds now.getSeconds() - 1
+
+      if stat.ctime < now
+        me.debugMessage 'regonize'
+        regonizer = new Regonizer
+        regonizer.once 'error', (err) ->
+          throw err
+        regonizer.once 'open', (res) ->
+          regonizer.barcode()
+          regonizer.sortbox()
+        regonizer.once 'boxes', me.regonizeBoxes.bind(me)
+        regonizer.open path.join(me.pathName, me.files[me.fileIndex])
+      else
+        me.debugMessage 'file is too young'
+        setTimeout me.nextFile.bind(me), 500
 
   checkFile: () ->
     me = @
     if not @run
-      me
-    me.debugMessage 'stat file'
-    fs.stat path.join(me.pathName, me.files[me.fileIndex]), me.statFile.bind(me)
+      false
+    else
+      me.debugMessage 'stat file'
+      fs.stat path.join(me.pathName, me.files[me.fileIndex]), me.statFile.bind(me)
 
   nextFile: (error)->
     me = @
     if not me.run
-      me
-    if error
-      me.emit 'error',error
+      false
     else
-      me.fileIndex++
-      me.runList.bind(me)()
+      if error
+        me.emit 'error',error
+      else
+        me.fileIndex++
+        me.runList.bind(me)()
 
   runList: () ->
     me = @
     if not @run
-      me
-    if me.fileIndex == me.files.length
-      me.debugMessage 'wait for next turn'
-      setTimeout me.watch.bind(me), me.intervalTimeout
+      false
     else
-      me.debugMessage 'check file',path.join(me.pathName, me.files[me.fileIndex])
-      me.checkFile()
+      if me.fileIndex == me.files.length
+        me.debugMessage 'wait for next turn'
+        setTimeout me.watch.bind(me), me.intervalTimeout
+      else
+        me.debugMessage 'check file',path.join(me.pathName, me.files[me.fileIndex])
+        me.checkFile()
