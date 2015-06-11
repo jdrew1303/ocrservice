@@ -246,13 +246,12 @@ class Regonizer extends EventEmitter
       item.ocr_zipCode = item.zipCode
       item.ocr_town = item.town
 
-      if typeof item.box!='undefined'
-         and item.box.length >0
+      if typeof item.box!='undefined' and item.box.length > 0
         item.street = item.box[0].strasse
         item.zipCode = item.box[0].plz
         item.town = item.box[0].ort
         item.district = item.box[0].ortsteil
-        
+
       result.push item
     result
 

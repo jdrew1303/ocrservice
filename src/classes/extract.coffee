@@ -81,9 +81,12 @@ class Extract extends EventEmitter
           result.name = nameLines.reverse().join(' ')
           extract = @extractHousenumber p.join(' ')
           result.street = extract.street.replace(/\.$/,'').replace(/stn$/,'str')
-          result.housenumber = extract.housenumber
-          result.housenumberExtension = extract.housenumberExtension
-          result.flatNumber = extract.flatNumber
-          result.message = "all data extracted"
-          result.state = true
+          if result.street.length > 2
+            result.housenumber = extract.housenumber
+            result.housenumberExtension = extract.housenumberExtension
+            result.flatNumber = extract.flatNumber
+            result.message = "all data extracted"
+            result.state = true
+          else
+            result.message = "street is to short"
     result
