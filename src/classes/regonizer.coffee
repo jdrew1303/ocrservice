@@ -178,6 +178,12 @@ class Regonizer extends EventEmitter
       (@drawRect item for item in sorts)
       @show(@contourImage)
     (@getBarcode item for item in sorts)
+
+    if @barcodes.length==0
+      xocr.SetMatrix @barcode_image
+      imagecodes = xocr.GetBarcode()
+      (@appendBarcodes codes for codes in imagecodes)
+    @barcodes.sort lengthRanking
     @barcodes
 
   getAddress: (item)->

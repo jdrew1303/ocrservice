@@ -119,21 +119,26 @@ class Watcher extends EventEmitter
             if err
               me.emit 'error', err
       else
+        if codes.length==0
+          console.log 'something went wrong',file
+          process.exit()
         name = codes.join('.')
+
         fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
           if err
             me.emit 'error', err
+
           data =
             codes: codes,
             item: res[0].item,
-            sortresult: res[0].box
+            sortresult: res[0].box[0]
 
           if me.debug
             me.io.emit 'new',data
           else
             me.io.emit 'new',data
 
-      me.debugMessage JSON.stringify(res,null,2),codes
+      me.debugMessage JSON.stringify([res,codes],null,2)
       me.debugMessage 'next'
       me.nextFile.bind(me)()
 
