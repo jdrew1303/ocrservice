@@ -199,7 +199,7 @@ class Install extends Command
   @commandName: 'install'
   @commandArgs: ['servicename','prefix']
   @options: [
-    {parameter: "-i,--initscript", description: "using initscript"}
+    {parameter: "-t,--type [type]", description: "service type (default systemd) "}
   ]
   @commandShortDescription: 'install this the service'
   @help: () ->
@@ -278,10 +278,12 @@ class Install extends Command
         console.log "a service with that name is allready installed"
       else
 
-        if me.program.initscript
+        if me.program.type = 'initscript'
+          me.linuxInstallInitDFile()
+        else if me.program.type = 'systemd'
           me.linuxInstallInitDFile()
         else
-          me.linuxSystemd()
+          console.log "not supported service type"
 
   action: (program,options) ->
     paths = process.mainModule.filename.split(path.sep)
@@ -305,6 +307,9 @@ class Install extends Command
 
     @options = options
     @program = program
+    if typeof @program.type!='string'
+      @program.type='systemd'
+
     if os.platform() == 'linux'
       @linux()
     else
