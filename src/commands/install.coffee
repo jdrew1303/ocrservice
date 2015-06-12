@@ -277,10 +277,11 @@ class Install extends Command
       if exists
         console.log "a service with that name is allready installed"
       else
+
         if me.program.initscript
-          me.linuxSystemd()
-        else
           me.linuxInstallInitDFile()
+        else
+          me.linuxSystemd()
 
   action: (program,options) ->
     paths = process.mainModule.filename.split(path.sep)
