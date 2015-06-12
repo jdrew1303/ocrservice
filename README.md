@@ -14,10 +14,16 @@ npm install ocrservice -g
 
 ## Usage
 
-Installing a service.
+Installing a systemd service.
 
 ```
 ocrservice install myservicename /my/image/path/
+```
+
+or as init.d script
+
+```
+ocrservice install --initscript myservicename /my/image/path/
 ```
 
 You can install/run more than one service. So it is possible to try a second run with different parameters. To see all parameters run.
@@ -26,4 +32,4 @@ You can install/run more than one service. So it is possible to try a second run
 ocrservice variables
 ```
 
-The service reads that variables from /etc/sysconfig/myservicename
+The *systemd* service reads that variables from /etc/sysconfig/myservicename. The init.d script keeps that variables inside.
