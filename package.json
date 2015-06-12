@@ -6,7 +6,7 @@
   "bin": {
     "sorter": "./bin/ocrservice"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "engines": {
     "node": ">=0.12.0"
   },
@@ -36,6 +36,7 @@
 
     "require-all": "*",
     "socket.io": "*",
+    "wocr": "*",
     "socket.io-client": "*",
     "request": "*",
     "commander": "*",
