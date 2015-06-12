@@ -6,7 +6,7 @@
   "bin": {
     "sorter": "./bin/ocrservice"
   },
-  "version": "0.1.2",
+  "version": "0.1.3",
   "engines": {
     "node": ">=0.12.0"
   },
@@ -44,7 +44,8 @@
     "mysql": "*",
     "soundex": "*",
     "osenv": "*",
-    "glob": "*"
+    "glob": "*",
+    "opencv": "git+https://github.com/tualo/node-opencv.git"
 
   },
   "devDependencies": {
