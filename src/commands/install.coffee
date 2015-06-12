@@ -278,10 +278,10 @@ class Install extends Command
         console.log "a service with that name is allready installed"
       else
 
-        if me.program.type = 'initscript'
+        if me.program.type == 'initscript'
           me.linuxInstallInitDFile()
-        else if me.program.type = 'systemd'
-          me.linuxInstallInitDFile()
+        else if me.program.type == 'systemd'
+          me.linuxSystemd()
         else
           console.log "not supported service type"
 
