@@ -1,0 +1,21 @@
+language: node_js
+
+node_js:
+  - '0.12'
+
+compiler: clang
+
+before_install:
+
+install:
+  # ensure source install works
+  - npm install --build-from-source
+  # test our module
+  - node bin/ocrservice
+
+before_script:
+
+script:
+
+after_success:
+  
