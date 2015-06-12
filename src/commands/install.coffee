@@ -38,7 +38,7 @@ class Install extends Command
 
   linuxInstallServiceFile: ()->
     me = @
-    fs.writeFile '/'+path.join('etc','systemd','system',me.options.servicename+'.service'), servicefiletext, (err)->
+    fs.writeFile '/'+path.join('etc','systemd','system',me.options.servicename+'.service'), me.servicefiletext, (err)->
       if err
         throw err
       else
@@ -50,7 +50,7 @@ class Install extends Command
 
   linuxInstallSysconfig: ()->
     me = @
-    fs.writeFile '/'+path.join('etc','sysconfig',me.options.servicename), envcontent.join("\n"), (err)->
+    fs.writeFile '/'+path.join('etc','sysconfig',me.options.servicename), me.envcontent.join("\n"), (err)->
       if err
         throw err
       else
@@ -79,12 +79,12 @@ class Install extends Command
         console.log "it seem you don't have systemd installed"
         console.log "but your service file should look like:"
         console.log ""
-        console.log servicefiletext
+        console.log me.servicefiletext
         console.log ""
         console.log ""
         console.log "environment file should look like:"
         console.log ""
-        console.log envcontent.join("\n")
+        console.log me.envcontent.join("\n")
       else
         me.linuxCheckSysconfig()
 
@@ -100,11 +100,11 @@ class Install extends Command
     paths = process.mainModule.filename.split(path.sep)
     paths.pop()
     paths.pop()
-    servicefiletext = servicefiletext.replace /\{cwd\}/g, paths.join(path.sep)
-    servicefiletext = servicefiletext.replace /\{prefix\}/g, options.prefix
-    servicefiletext = servicefiletext.replace /\{servicename\}/g, options.servicename
-    envcontent = []
-    (envcontent.push(name+'='+variables[name]) for name of variables)
+    @servicefiletext = servicefiletext.replace /\{cwd\}/g, paths.join(path.sep)
+    @servicefiletext = servicefiletext.replace /\{prefix\}/g, options.prefix
+    @servicefiletext = servicefiletext.replace /\{servicename\}/g, options.servicename
+    @envcontent = []
+    (@envcontent.push(name+'='+variables[name]) for name of variables)
     @options = options
     if os.platform() == 'linux'
       @linux()
