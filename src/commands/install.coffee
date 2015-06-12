@@ -7,7 +7,7 @@ Regonizer = require '../classes/regonizer'
 
 servicefiletext = """
 [Unit]
-Description=ocrservice
+Description={servicename}
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/{servicename}
@@ -21,6 +21,7 @@ WorkingDirectory={cwd}
 
 [Install]
 WantedBy=multi-user.target
+Alias={servicename}.service
 """
 
 module.exports =
@@ -33,6 +34,68 @@ class Install extends Command
     """
 
     """
+
+
+  linuxInstallServiceFile: ()->
+    me = @
+    fs.writeFile '/'+path.join('etc','systemd','system',me.options.servicename+'.service'), servicefiletext, (err)->
+      if err
+        throw err
+      else
+        console.log """
+        the service is installed.
+        you can start it with `systemctl start {servicename}`
+        or enable it to run at boot `systemctl enable {servicename}`
+        """
+
+  linuxInstallSysconfig: ()->
+    me = @
+    fs.writeFile '/'+path.join('etc','sysconfig',me.options.servicename), envcontent.join("\n"), (err)->
+      if err
+        throw err
+      else
+        console.log """
+        the service configuration is installed on """+'/'+path.join('etc','sysconfig',me.options.servicename)+"""
+        """
+        me.linuxInstallServiceFile()
+
+  linuxCheckSysconfig: ()->
+    me = @
+    fs.exists '/'+path.join('etc','sysconfig'), (exists)->
+      if exists
+        me.linuxInstallSysconfig()
+      else
+
+        fs.mkdir '/'+path.join('etc','sysconfig'), (err)->
+          if err
+            throw err
+          else
+            me.linuxInstallSysconfig()
+
+  linuxSystemd: ()->
+    me = @
+    fs.exists '/'+path.join('etc','systemd','system'), (exists)->
+      if not exists
+        console.log "it seem you don't have systemd installed"
+        console.log "but your service file should look like:"
+        console.log ""
+        console.log servicefiletext
+        console.log ""
+        console.log ""
+        console.log "environment file should look like:"
+        console.log ""
+        console.log envcontent.join("\n")
+      else
+        me.linuxCheckSysconfig()
+
+  linux: ()->
+    me = @
+    fs.exists '/'+path.join('etc','systemd','system',me.options.servicename+'.service'), (exists) ->
+      if exists
+        console.log "a service with that name is allready installed"
+      else
+        me.linuxSystemd()
+
   action: (program,options) ->
     paths = process.mainModule.filename.split(path.sep)
     paths.pop()
@@ -42,39 +105,8 @@ class Install extends Command
     servicefiletext = servicefiletext.replace /\{servicename\}/g, options.servicename
     envcontent = []
     (envcontent.push(name+'='+variables[name]) for name of variables)
-
+    @options = options
     if os.platform() == 'linux'
-      fs.exists '/'+path.join('etc','sysconfig',options.servicename), (exists) ->
-        if exists
-          console.log "a service with that name is allready installed"
-        else
-          fs.exists '/'+path.join('etc','systemd','system'), (exists)->
-            if not exists
-              console.log "it seem you don't have systemd installed"
-              console.log "but your service file should look like:"
-              console.log ""
-              console.log servicefiletext
-              console.log ""
-              console.log ""
-              console.log "environment file should look like:"
-              console.log ""
-              console.log envcontent.join("\n")
-            else
-              fs.writeFile '/'+path.join('etc','sysconfig',options.servicename), envcontent.join("\n"), (err)->
-                if err
-                  throw err
-                else
-                  console.log """
-                  the service configuration is installed on """+'/'+path.join('etc','sysconfig',options.servicename)+"""
-                  """
-                  fs.writeFile '/'+path.join('etc','systemd','system',options.servicename+'.service'), servicefiletext, (err)->
-                    if err
-                      throw err
-                    else
-                      console.log """
-                      the service is installed.
-                      you can start it with `systemctl start ocrservice`
-                      or enable it to run at boot `systemctl enable ocrservice`
-                      """
+      @linux()
     else
       console.log "your platform is currently not supported"
