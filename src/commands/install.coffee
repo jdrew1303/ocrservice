@@ -313,4 +313,4 @@ class Install extends Command
     if os.platform() == 'linux'
       @linux()
     else
-      console.log "your platform is currently not supported"
+      console.log "your plattform is currently not supported"
