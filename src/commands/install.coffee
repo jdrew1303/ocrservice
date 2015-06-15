@@ -48,7 +48,8 @@ initdfileTemplate = """
 
 NODE_ENV="production"
 APP_DIR="{cwd}"
-NODE_APP="bin/ocrservice watch {prefix}"
+NODE_APP="bin/ocrservice"
+APP_PARAMS="watch {prefix}"
 CONFIG_DIR="$APP_DIR"
 PID_DIR="$APP_DIR/pid"
 PID_FILE="$PID_DIR/app.pid"
@@ -79,7 +80,7 @@ start_it() {
 
     echo "Starting node app ..."
     {vars}
-    NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP"  1>"$LOG_FILE" 2>&1 &
+    NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP" $APP_PARAMS 1>"$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
     echo "Node app started with pid $!"
 }
