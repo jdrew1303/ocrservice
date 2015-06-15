@@ -27,16 +27,6 @@ Alias={servicename}.service
 initdfile = """
 #!/bin/sh
 
-NODE_ENV="production"
-APP_DIR="{cwd}"
-NODE_APP="bin/ocrservice watch {prefix}"
-CONFIG_DIR="$APP_DIR"
-PID_DIR="$APP_DIR/pid"
-PID_FILE="$PID_DIR/app.pid"
-LOG_DIR="$APP_DIR/log"
-LOG_FILE="$LOG_DIR/app.log"
-NODE_EXEC=$(which node)
-
 ###############
 
 # REDHAT chkconfig header
@@ -54,6 +44,18 @@ NODE_EXEC=$(which node)
 ### END INIT INFO
 
 ###############
+
+
+NODE_ENV="production"
+APP_DIR="{cwd}"
+NODE_APP="bin/ocrservice watch {prefix}"
+CONFIG_DIR="$APP_DIR"
+PID_DIR="$APP_DIR/pid"
+PID_FILE="$PID_DIR/app.pid"
+LOG_DIR="$APP_DIR/log"
+LOG_FILE="$LOG_DIR/app.log"
+NODE_EXEC=$(which node)
+
 
 USAGE="Usage: $0 {start|stop|restart|status} [--force]"
 FORCE_OP=false
@@ -216,7 +218,8 @@ class Install extends Command
         console.log """
         the service is installed, as init.d
         you can start it with `service {servicename} start`
-        """.replace /\{servicename\}/g, me.options.servicename
+        or with `/etc/init.d/{servicename} start`
+        """.replace(/\{servicename\}/g, me.options.servicename).replace(/\{cwd\}/g, process.cwd())
 
 
   linuxInstallServiceFile: ()->
@@ -229,7 +232,7 @@ class Install extends Command
         the service is installed.
         you can start it with `systemctl start {servicename}`
         or enable it to run at boot `systemctl enable {servicename}`
-        """.replace /\{servicename\}/g, me.options.servicename
+        """.replace(/\{servicename\}/g, me.options.servicename).replace(/\{cwd\}/g, process.cwd())
 
   linuxInstallSysconfig: ()->
     me = @
@@ -278,7 +281,7 @@ class Install extends Command
         console.log "a service with that name is allready installed"
       else
 
-        if me.program.type == 'initscript'
+        if me.program.type == 'init'
           me.linuxInstallInitDFile()
         else if me.program.type == 'systemd'
           me.linuxSystemd()
@@ -291,12 +294,13 @@ class Install extends Command
     paths.pop()
 
     @servicefiletext = servicefiletext.replace /\{cwd\}/g, paths.join(path.sep)
-    @servicefiletext = servicefiletext.replace /\{prefix\}/g, options.prefix
-    @servicefiletext = servicefiletext.replace /\{servicename\}/g, options.servicename
+    @servicefiletext = @servicefiletext.replace /\{prefix\}/g, options.prefix
+    @servicefiletext = @servicefiletext.replace /\{servicename\}/g, options.servicename
 
-    @initdfile = initdfile.replace /\{cwd\}/g, paths.join(path.sep)
-    @initdfile = initdfile.replace /\{prefix\}/g, options.prefix
-    @initdfile = initdfile.replace /\{servicename\}/g, options.servicename
+    @initdfile = initdfile.replace(/\{cwd\}/g, paths.join(path.sep))
+    @initdfile = @initdfile.replace(/\{prefix\}/g, options.prefix)
+    @initdfile = @initdfile.replace(/\{servicename\}/g, options.servicename)
+
 
     @envcontent = []
     (@envcontent.push(name+'='+variables[name]) for name of variables)
@@ -307,8 +311,8 @@ class Install extends Command
 
     @options = options
     @program = program
-    if typeof @program.type!='string'
-      @program.type='systemd'
+    if typeof @program.type != 'string'
+      @program.type = 'systemd'
 
     if os.platform() == 'linux'
       @linux()
