@@ -300,7 +300,8 @@ class Install extends Command
     @initdfile = initdfile.replace(/\{cwd\}/g, paths.join(path.sep))
     @initdfile = @initdfile.replace(/\{prefix\}/g, options.prefix)
     @initdfile = @initdfile.replace(/\{servicename\}/g, options.servicename)
-
+    console.log @initdfile
+    process.exit()
 
     @envcontent = []
     (@envcontent.push(name+'='+variables[name]) for name of variables)
