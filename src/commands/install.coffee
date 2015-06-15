@@ -78,6 +78,7 @@ start_it() {
     mkdir -p "$LOG_DIR"
 
     echo "Starting node app ..."
+    echo "$NODE_EXEC \"$APP_DIR/$NODE_APP\""
     {vars} NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP"  1>"$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
     echo "Node app started with pid $!"
