@@ -78,8 +78,8 @@ start_it() {
     mkdir -p "$LOG_DIR"
 
     echo "Starting node app ..."
-    echo "$NODE_EXEC \"$APP_DIR/$NODE_APP\""
-    {vars} NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP"  1>"$LOG_FILE" 2>&1 &
+    {vars}
+    NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP"  1>"$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
     echo "Node app started with pid $!"
 }
@@ -309,7 +309,7 @@ class Install extends Command
 
     @vars = []
     (@vars.push(name+'="'+variables[name]+'"') for name of variables)
-    @initdfile = @initdfile.replace /\{vars\}/g, @vars.join(' ')
+    @initdfile = @initdfile.replace /\{vars\}/g, @vars.join("\n")
 
     @options = options
     @program = program
