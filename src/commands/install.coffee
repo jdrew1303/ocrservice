@@ -5,7 +5,7 @@ os = require 'os'
 variables = require '../variables'
 Regonizer = require '../classes/regonizer'
 
-servicefiletext = """
+servicefiletextTemplate = """
 [Unit]
 Description={servicename}
 
@@ -24,7 +24,7 @@ WantedBy=multi-user.target
 Alias={servicename}.service
 """
 
-initdfile = """
+initdfileTemplate = """
 #!/bin/sh
 
 ###############
@@ -211,6 +211,7 @@ class Install extends Command
 
   linuxInstallInitDFile: ()->
     me = @
+
     fs.writeFile '/'+path.join('etc','init.d',me.options.servicename), me.initdfile, (err)->
       if err
         throw err
@@ -293,21 +294,21 @@ class Install extends Command
     paths.pop()
     paths.pop()
 
-    @servicefiletext = servicefiletext.replace /\{cwd\}/g, paths.join(path.sep)
+    @servicefiletext = servicefiletextTemplate.replace /\{cwd\}/g, paths.join(path.sep)
     @servicefiletext = @servicefiletext.replace /\{prefix\}/g, options.prefix
     @servicefiletext = @servicefiletext.replace /\{servicename\}/g, options.servicename
 
-    @initdfile = initdfile.replace(/\{cwd\}/g, paths.join(path.sep))
+    @initdfile = initdfileTemplate.replace(/\{cwd\}/g, paths.join(path.sep))
     @initdfile = @initdfile.replace(/\{prefix\}/g, options.prefix)
     @initdfile = @initdfile.replace(/\{servicename\}/g, options.servicename)
-    console.log @initdfile
+
 
     @envcontent = []
     (@envcontent.push(name+'='+variables[name]) for name of variables)
 
     @vars = []
     (@vars.push(name+'="'+variables[name]+'"') for name of variables)
-    @initdfile = initdfile.replace /\{vars\}/g, @vars.join(' ')
+    @initdfile = @initdfile.replace /\{vars\}/g, @vars.join(' ')
 
     @options = options
     @program = program
