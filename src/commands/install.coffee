@@ -11,7 +11,7 @@ Description={servicename}
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/{servicename}
-ExecStart={cwd}bin/ocrservice watch {prefix}
+ExecStart={cwd}bin/ocrservice-watch {prefix}
 Restart=always
 User=nobody
 Group=nobody
@@ -48,8 +48,8 @@ initdfileTemplate = """
 
 NODE_ENV="production"
 APP_DIR="{cwd}"
-NODE_APP="bin/ocrservice"
-APP_PARAMS="watch {prefix}"
+NODE_APP="bin/ocrservice-watch"
+APP_PARAMS="{prefix}"
 CONFIG_DIR="$APP_DIR"
 PID_DIR="$APP_DIR/pid"
 PID_FILE="$PID_DIR/app.pid"
