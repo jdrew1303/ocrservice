@@ -75,21 +75,25 @@ class Regonizer extends EventEmitter
         if err
           me.emit 'error', err
         else
-          im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
-          me.imageArea = im.width() * im.height()
-          me.original = im.clone()
+          if im.width()==0
+            me.emit 'error', new Error('zero size')
+          else
+
+            im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
+            me.imageArea = im.width() * im.height()
+            me.original = im.clone()
 
 
 
 
-          me.barcode_image = im.clone()
-          me.barcode_image.convertGrayscale()
+            me.barcode_image = im.clone()
+            me.barcode_image.convertGrayscale()
 
-          me.image = im.clone()
-          me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
-          me.image.convertGrayscale()
+            me.image = im.clone()
+            me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
+            me.image.convertGrayscale()
 
-          me.emit 'open', true
+            me.emit 'open', true
     else
       me.emit 'error', new Error('there is no image')
   removeDoubleRect: (sorts)->
