@@ -2,6 +2,7 @@
 path = require 'path'
 fs = require 'fs'
 glob = require 'glob'
+IO = require '../classes/io'
 socket = require 'socket.io-client'
 variables = require '../variables'
 Regonizer = require '../classes/regonizer'
@@ -77,13 +78,19 @@ class Watcher extends EventEmitter
       me.emit 'start', true
       @run = true
       me.watch()
+      me.socketServer()
 
   stop: ()->
     me = @
     if @run
       @run = false
       me.emit 'stop', true
+      if @io?
+        @io.close()
+        @io = null
 
+  socketServer: () ->
+    @io = new IO()
 
   watch: ()->
     me = @
@@ -168,7 +175,15 @@ class Watcher extends EventEmitter
         regonizer = new Regonizer me.db
         regonizer.setDebug me.debug
         regonizer.on 'error', (err) ->
-          throw err
+          file = path.join(me.pathName, me.files[me.fileIndex])
+          fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(err,null,2) , (err) ->
+            if err
+              me.emit 'error', err
+          fs.rename file, path.join(me.pathName, 'bad', path.basename(file)), (err) ->
+            if err
+              me.emit 'error', err
+            else
+              setTimeout me.nextFile.bind(me), 500
         regonizer.on 'open', (res) ->
           regonizer.barcode()
           regonizer.sortbox()
