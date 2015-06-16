@@ -1,5 +1,7 @@
 
 variables =
+  WEBSOCKET_PORT: "8080"
+  
   OCR_LANGUAGE: "deu"
 
   OCR_DEBUG_WINDOW: 1
