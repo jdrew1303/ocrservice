@@ -1,11 +1,12 @@
 
 variables =
-  WEBSOCKET_PORT: "8080"
-  
+  WEBSOCKET_PORT: 8080
+  UI_DISCOVER_PORT: 32145
+
   OCR_LANGUAGE: "deu"
 
   OCR_DEBUG_WINDOW: 1
-  OCR_DEBUG_WINDOW_TIMEOUT: 100
+  OCR_DEBUG_WINDOW_TIMEOUT: 5000
 
   OCR_WATCH_PATTERN: "*.tiff"
   OCR_RELATIVEAREAMINIMUM: 0.01
@@ -46,6 +47,8 @@ variables =
   OCR_DB_HOST: "localhost"
   OCR_SOCKET_IO_HOST: "http://localhost:3000"
 
+  ERP_URL: "http://localhost/wawi/index.php"
+  ERP_CLIENT: "macc"
 
 (variables[name] = process.env[name] for name of variables when process.env[name]? )
 
