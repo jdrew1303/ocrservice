@@ -67,8 +67,10 @@ class Regonizer extends EventEmitter
 
   setDebug: (mode)->
     @debug = mode
-  open: (fileName)->
+  open: (fileName,brightness)->
     me = @
+    if typeof brightness == 'undefined'
+      brightness=true
     @fileName = fileName
     if @fileName
       cv.readImage @fileName, (err, im)->
@@ -90,7 +92,8 @@ class Regonizer extends EventEmitter
             me.barcode_image.convertGrayscale()
 
             me.image = im.clone()
-            me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
+            if brightness
+              me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
             me.image.convertGrayscale()
 
             me.emit 'open', true
@@ -125,6 +128,35 @@ class Regonizer extends EventEmitter
         showImage.resize showImage.width()/scale,showImage.height()/scale
       win.show showImage
       win.blockingWaitKey parseInt(variables.OCR_DEBUG_WINDOW_TIMEOUT)
+
+  outerbounding: ()->
+    bound_image = @image.clone()
+    result =
+      x: 0
+      y: 0
+      width: bound_image.width()
+      height: bound_image.height()
+
+    area = result.width * result.height
+    last_area = 0
+    bound_image.canny 0, 100
+    if @debug
+      @show bound_image
+
+    bound_image.findContours()
+    i=0
+    contours = bound_image.findContours()
+    while i < contours.size()
+      rect = contours.boundingRect i
+      rect_area = rect.width * rect.height
+      if rect_area / area > 0.2
+        if rect_area>last_area
+          result = rect
+          last_area = rect_area
+      i++
+
+    result
+
 
   appendBarcodes: (item)->
     code = item.code
