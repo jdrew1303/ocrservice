@@ -17,6 +17,7 @@ class Watcher extends EventEmitter
     @run = false
     @files = []
     @fileIndex = 0
+
     @io = socket variables.OCR_SOCKET_IO_HOST
     @io.on 'connect', @socketConnected.bind(@)
     @io.on 'disconnect', @socketDisconnected.bind(@)
@@ -42,6 +43,7 @@ class Watcher extends EventEmitter
     if not pathName
       throw new Error('you must give a path name')
     @pathName = pathName
+    @socketServer()
     me = @
     fs.exists @pathName, (exists)->
 
@@ -74,23 +76,27 @@ class Watcher extends EventEmitter
 
   start: ()->
     me = @
+
     if not @run
       me.emit 'start', true
       @run = true
       me.watch()
-      me.socketServer()
+      #me.socketServer()
+
 
   stop: ()->
     me = @
     if @run
       @run = false
       me.emit 'stop', true
-      if @io?
-        @io.close()
-        @io = null
+      if @io_client?
+        true
+        #@io_client.close()
+        #@io_client = null
 
   socketServer: () ->
-    @io = new IO()
+    @io_client = new IO()
+    @io_client.setPath(@pathName)
 
   watch: ()->
     me = @
