@@ -41,6 +41,7 @@
     "wocr": "*",
     "socket.io-client": "*",
     "request": "*",
+    "commander": "*",
     "tualo-commander": "*",
     "colors": "*",
     "mysql": "*",
