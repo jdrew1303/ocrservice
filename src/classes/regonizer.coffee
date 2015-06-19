@@ -78,7 +78,7 @@ class Regonizer extends EventEmitter
           me.emit 'error', err
         else
           if im.width()==0
-            me.emit 'error', new Error('zero size')
+            me.emit 'error', 'zero size'
           else
 
             im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)

@@ -52,6 +52,8 @@ class IO extends EventEmitter
       me.onSkipLetter(socket, data)
     socket.on 'check', (data) ->
       me.onCheck(socket, data)
+    socket.on 'send', (data) ->
+      me.sendLetter(socket)
 
   updateList: ()->
     me = @
@@ -90,6 +92,7 @@ class IO extends EventEmitter
     socket.mywidth = data.mywidth
 
     socket.erp.on 'loginSuccess', (sid) ->
+      socket.emit 'loginSuccess', sid
       me.sendLetter socket
     socket.erp.on 'loginError', (error) ->
       socket.emit 'loginError', error
@@ -98,15 +101,18 @@ class IO extends EventEmitter
   onBadLetter: (socket,data) ->
     me = @
     file = path.join(me.pathName, me.pathAddition, data.id+'.tiff')
-    fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(data,null,2) , (err) ->
-      if err
-        me.emit 'error', err
-    fs.rename file, path.join(me.pathName, 'bad', path.basename(file)), (err) ->
-      if err
-        me.emit 'error', err
+    fs.exists file, (exists) ->
+      if exists==true
+        fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(data,null,2) , (err) ->
+          if err
+            me.emit 'error', err
+        fs.rename file, path.join(me.pathName, 'bad', path.basename(file)), (err) ->
+          if err
+            me.emit 'error', err
     me.sendLetter socket
 
   onSaveLetter: (socket,data) ->
+    console.log 'onSaveLetter 1', data.id, @sendings
     me = @
     item =
       codes: [ data.code ]
@@ -118,12 +124,21 @@ class IO extends EventEmitter
       town: data.town
 
     file = path.join(me.pathName, me.pathAddition, data.id+'.tiff')
-    fs.rename file, path.join(me.pathName, 'good', path.basename(file)), (err) ->
-      if err
-        me.emit 'error', err
 
+    fs.exists file, (exists) ->
+      if exists==true
+        fs.rename file, path.join(me.pathName, 'good', path.basename(file)), (err) ->
+          console.log 'onSaveLetter 3', err
+          if err
+            socket.emit 'someerror', 'renaming'
+            me.sendLetter socket
+          else
+            me.sendLetter socket
+      else
+        me.sendLetter socket
     me.watcher.io.emit 'new', item
-    @sendLetter socket
+    console.log 'onSaveLetter 2', data.id
+
 
   onSkipLetter: (socket,data) ->
     me = @
@@ -141,47 +156,52 @@ class IO extends EventEmitter
 
   sendLetter: (socket) ->
     me = @
-    data =
-      id: @sendings.shift()
     if @sendings.length == 0
+      socket.emit 'empty', true
       @updateList()
+    else
+      data =
+        id: @sendings.shift()
+      if @sendings.length == 0
+        @updateList()
 
-    name = path.join(me.pathName, me.pathAddition,data.id+'.tiff')
-    regonizer = new Regonizer
-    regonizer.setDebug false
-    regonizer.on 'error', (err) ->
-      console.log err
-      socket.emit 'letter', data #do something better
+      name = path.join(me.pathName, me.pathAddition,data.id+'.tiff')
+      regonizer = new Regonizer
+      regonizer.setDebug false
+      regonizer.on 'error', (err) ->
+        console.log err, data.id
+        me.onBadLetter socket, data
+        #socket.emit 'letter', data #do something better
 
-    regonizer.on 'open', (res) ->
-      r = regonizer.outerbounding()
-      item =
-        rect: r
-      regonizer.getText item
+      regonizer.on 'open', (res) ->
+        r = regonizer.outerbounding()
+        item =
+          rect: r
+        regonizer.getText item
 
-      data.txt = regonizer.texts
-      data.zipCode = ""
-      data.town = ""
-      data.street = ""
-      data.housenumber = ""
-      data.housenumberExtension = ""
+        data.txt = regonizer.texts
+        data.zipCode = ""
+        data.town = ""
+        data.street = ""
+        data.housenumber = ""
+        data.housenumberExtension = ""
 
-      if data.txt.length>0
-        adr = regonizer.getAddress data.txt[0]
-        data.adr = adr
-        data.zipCode = adr.zipCode
-        data.town = adr.town
-        data.street = adr.street
-        data.housenumber = adr.housenumber
-        data.housenumberExtension = adr.housenumberExtension
+        if data.txt.length>0
+          adr = regonizer.getAddress data.txt[0]
+          data.adr = adr
+          data.zipCode = adr.zipCode
+          data.town = adr.town
+          data.street = adr.street
+          data.housenumber = adr.housenumber
+          data.housenumberExtension = adr.housenumberExtension
 
-      cropped = regonizer.image.crop r.x,r.y,r.width,r.height
-      cropped.rotate 270
-      if typeof socket.mywidth == 'number'
-        ratio = socket.mywidth/r.width
-        cropped.resize  r.height*ratio, r.width*ratio
-      cropped.toBufferAsync (err,buffer)->
-        inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
-        data.inlineimage = inlineimage
-        socket.emit 'letter',data
-    regonizer.open name, false
+        cropped = regonizer.image.crop r.x,r.y,r.width,r.height
+        cropped.rotate 270
+        if typeof socket.mywidth == 'number'
+          ratio = socket.mywidth/r.width
+          cropped.resize  r.height*ratio, r.width*ratio
+        cropped.toBufferAsync (err,buffer)->
+          inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
+          data.inlineimage = inlineimage
+          socket.emit 'letter',data
+      regonizer.open name, false
