@@ -1,6 +1,6 @@
 Command = require './command'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Recognizer = require '../classes/recognizer'
 
 module.exports =
 class Sortbox extends Command
@@ -15,13 +15,13 @@ class Sortbox extends Command
 
     """
   action: (program,options) ->
-    regonizer = new Regonizer
-    regonizer.setDebug program.debug||false
-    regonizer.on 'error', (err) ->
+    recognizer = new Recognizer
+    recognizer.setDebug program.debug||false
+    recognizer.on 'error', (err) ->
       throw err
-    regonizer.on 'open', (res) ->
-      regonizer.sortbox()
-    regonizer.on 'boxes', (res) ->
+    recognizer.on 'open', (res) ->
+      recognizer.sortbox()
+    recognizer.on 'boxes', (res) ->
       console.log JSON.stringify(res,null,2)
       process.exit()
-    regonizer.open options.filename
+    recognizer.open options.filename

@@ -4,7 +4,7 @@ fs = require 'fs'
 glob = require 'glob'
 socketIO = require 'socket.io'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Recognizer = require '../classes/recognizer'
 ERP = require '../classes/erp'
 cv = require 'opencv'
 udpfindme = require 'udpfindme'
@@ -128,7 +128,6 @@ class IO extends EventEmitter
     fs.exists file, (exists) ->
       if exists==true
         fs.rename file, path.join(me.pathName, 'good', path.basename(file)), (err) ->
-          console.log 'onSaveLetter 3', err
           if err
             socket.emit 'someerror', 'renaming'
             me.sendLetter socket
@@ -137,7 +136,6 @@ class IO extends EventEmitter
       else
         me.sendLetter socket
     me.watcher.io.emit 'new', item
-    console.log 'onSaveLetter 2', data.id
 
 
   onSkipLetter: (socket,data) ->
@@ -147,12 +145,12 @@ class IO extends EventEmitter
 
   onCheck: (socket,data) ->
     me = @
-    regonizer = new Regonizer
-    regonizer.setDebug false
-    regonizer.addresses.push data
-    regonizer.once 'boxes', (boxes,codes) ->
+    recognizer = new Recognizer
+    recognizer.setDebug false
+    recognizer.addresses.push data
+    recognizer.once 'boxes', (boxes,codes) ->
       socket.emit 'checked', boxes
-    regonizer.sortboxAfterText()
+    recognizer.sortboxAfterText()
 
   sendLetter: (socket) ->
     me = @
@@ -166,20 +164,18 @@ class IO extends EventEmitter
         @updateList()
 
       name = path.join(me.pathName, me.pathAddition,data.id+'.tiff')
-      regonizer = new Regonizer
-      regonizer.setDebug false
-      regonizer.on 'error', (err) ->
-        console.log err, data.id
+      recognizer = new Recognizer
+      recognizer.setDebug false
+      recognizer.on 'error', (err) ->
         me.onBadLetter socket, data
-        #socket.emit 'letter', data #do something better
 
-      regonizer.on 'open', (res) ->
-        r = regonizer.outerbounding()
+      recognizer.on 'open', (res) ->
+        r = recognizer.outerbounding()
         item =
           rect: r
-        regonizer.getText item
+        recognizer.getText item
 
-        data.txt = regonizer.texts
+        data.txt = recognizer.texts
         data.zipCode = ""
         data.town = ""
         data.street = ""
@@ -187,7 +183,7 @@ class IO extends EventEmitter
         data.housenumberExtension = ""
 
         if data.txt.length>0
-          adr = regonizer.getAddress data.txt[0]
+          adr = recognizer.getAddress data.txt[0]
           data.adr = adr
           data.zipCode = adr.zipCode
           data.town = adr.town
@@ -195,7 +191,7 @@ class IO extends EventEmitter
           data.housenumber = adr.housenumber
           data.housenumberExtension = adr.housenumberExtension
 
-        cropped = regonizer.image.crop r.x,r.y,r.width,r.height
+        cropped = recognizer.image.crop r.x,r.y,r.width,r.height
         cropped.rotate 270
         if typeof socket.mywidth == 'number'
           ratio = socket.mywidth/r.width
@@ -204,4 +200,4 @@ class IO extends EventEmitter
           inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
           data.inlineimage = inlineimage
           socket.emit 'letter',data
-      regonizer.open name, false
+      recognizer.open name, false

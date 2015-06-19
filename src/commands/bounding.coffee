@@ -1,6 +1,6 @@
 Command = require './command'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Recognizer = require '../classes/recognizer'
 
 module.exports =
 class Bounding extends Command
@@ -15,10 +15,10 @@ class Bounding extends Command
 
     """
   action: (program,options) ->
-    regonizer = new Regonizer
-    regonizer.setDebug program.debug||false
-    regonizer.on 'error', (err) ->
+    recognizer = new Recognizer
+    recognizer.setDebug program.debug||false
+    recognizer.on 'error', (err) ->
       throw err
-    regonizer.on 'open', (res) ->
-      console.log regonizer.outerbounding()
-    regonizer.open options.filename
+    recognizer.on 'open', (res) ->
+      console.log recognizer.outerbounding()
+    recognizer.open options.filename

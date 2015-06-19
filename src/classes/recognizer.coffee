@@ -37,7 +37,7 @@ lengthRanking = (a,b) ->
   #  ( a.length < b.length )?1: ( ( a.length > b.length )?-1:0 )
 
 module.exports =
-class Regonizer extends EventEmitter
+class Recognizer extends EventEmitter
 
   constructor: (db)->
 

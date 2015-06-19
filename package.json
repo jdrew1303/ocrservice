@@ -11,7 +11,8 @@
     "node": ">=0.12.0"
   },
   "keywords": [
-    "sorter"
+    "lettersorter",
+    "ocr"
   ],
   "author": [
     {

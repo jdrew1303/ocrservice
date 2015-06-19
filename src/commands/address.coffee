@@ -1,6 +1,6 @@
 Command = require './command'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Recognizer = require '../classes/recognizer'
 
 module.exports =
 class Address extends Command
@@ -15,11 +15,11 @@ class Address extends Command
 
     """
   action: (program,options) ->
-    regonizer = new Regonizer
-    regonizer.setDebug program.debug||false
-    regonizer.on 'error', (err) ->
+    recognizer = new Recognizer
+    recognizer.setDebug program.debug||false
+    recognizer.on 'error', (err) ->
       throw err
-    regonizer.on 'open', (res) ->
-      console.log regonizer.barcode()
-      console.log regonizer.text()
-    regonizer.open options.filename
+    recognizer.on 'open', (res) ->
+      console.log recognizer.barcode()
+      console.log recognizer.text()
+    recognizer.open options.filename

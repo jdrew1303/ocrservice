@@ -3,7 +3,7 @@ path = require 'path'
 fs = require 'fs'
 os = require 'os'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Recognizer = require '../classes/recognizer'
 
 servicefiletextTemplate = """
 [Unit]

@@ -1,14 +1,14 @@
-## Regonizeletter Command Line Tool
+## Recognizerletter Command Line Tool
 
 This commandline tool that reads an image, and searches for address boxes and barcodes. If found the results be output as JSON.
 
 # Usage
 
-    regonizeletter --filename myimage.tiff
+    recognizerletter --filename myimage.tiff
 
 # Options
 
-Regonizeletter uses environment variables for configuration.
+Recognizerletter uses environment variables for configuration.
 
 
     OCR_LANGUAGE deu

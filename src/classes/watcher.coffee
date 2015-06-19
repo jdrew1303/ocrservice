@@ -5,7 +5,7 @@ glob = require 'glob'
 IO = require '../classes/io'
 socket = require 'socket.io-client'
 variables = require '../variables'
-Regonizer = require '../classes/regonizer'
+Recognizer = require '../classes/recognizer'
 DB = require '../classes/db'
 
 # watching a directory for new files
@@ -23,7 +23,6 @@ class Watcher extends EventEmitter
     @io.on 'disconnect', @socketDisconnected.bind(@)
     @io.on 'start', @start.bind(@)
     @io.on 'stop', @stop.bind(@)
-    #regonizer.setDebug program.debug||false
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
     @db.setLimit 100
     @db.on 'error', (err) ->
@@ -115,14 +114,14 @@ class Watcher extends EventEmitter
           me.debugMessage(me.files .length,'files')
           me.runList()
 
-  regonizeBoxes: (res,codes)->
+  recognizeBoxes: (res,codes)->
 
     me = @
     if not @run
       false
     else
 
-      me.debugMessage 'regonizeBoxes'
+      me.debugMessage 'recognizerBoxes'
       file = path.join(me.pathName, me.files[me.fileIndex])
       if codes.length == 0
         #no code
@@ -177,10 +176,10 @@ class Watcher extends EventEmitter
 
       if stat.ctime < now
         me.current_stat = stat
-        me.debugMessage 'regonize'
-        regonizer = new Regonizer me.db
-        regonizer.setDebug me.debug
-        regonizer.on 'error', (err) ->
+        me.debugMessage 'recognize'
+        recognizer = new Recognizer me.db
+        recognizer.setDebug me.debug
+        recognizer.on 'error', (err) ->
           file = path.join(me.pathName, me.files[me.fileIndex])
           fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(err,null,2) , (err) ->
             if err
@@ -190,11 +189,11 @@ class Watcher extends EventEmitter
               me.emit 'error', err
             else
               setTimeout me.nextFile.bind(me), 500
-        regonizer.on 'open', (res) ->
-          regonizer.barcode()
-          regonizer.sortbox()
-        regonizer.on 'boxes', me.regonizeBoxes.bind(me)
-        regonizer.open path.join(me.pathName, me.files[me.fileIndex])
+        recognizer.on 'open', (res) ->
+          recognizer.barcode()
+          recognizer.sortbox()
+        recognizer.on 'boxes', me.recognizeBoxes.bind(me)
+        recognizer.open path.join(me.pathName, me.files[me.fileIndex])
       else
         me.debugMessage 'file is too young'
         setTimeout me.nextFile.bind(me), 500
