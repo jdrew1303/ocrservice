@@ -92,13 +92,14 @@ class Regonizer extends EventEmitter
             me.barcode_image.convertGrayscale()
 
             me.image = im.clone()
-            if brightness
+            if brightness == true
               me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
             me.image.convertGrayscale()
 
             me.emit 'open', true
     else
       me.emit 'error', new Error('there is no image')
+      
   removeDoubleRect: (sorts)->
     result=[]
     lastrect = ""
