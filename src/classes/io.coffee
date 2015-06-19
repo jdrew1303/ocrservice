@@ -41,12 +41,12 @@ class IO extends EventEmitter
     me = @
     socket.on 'disconnect', (data) ->
       me.onDisconnect(socket, data)
-    socket.on 'work', (data) ->
-      me.onWork(socket, data)
     socket.on 'login', (data) ->
       me.onLogin(socket, data)
-    socket.on 'setbad', (data) ->
-      me.onSetBad(socket, data)
+    socket.on 'bad', (data) ->
+      me.onBadLetter(socket, data)
+    socket.on 'skip', (data) ->
+      me.onSkipLetter(socket, data)
 
   updateList: ()->
     me = @
@@ -91,7 +91,7 @@ class IO extends EventEmitter
       socket.emit 'loginError', error
     socket.erp.login()
 
-  onSetBad: (socket,data) ->
+  onBadLetter: (socket,data) ->
     me = @
     file = path.join(me.pathName, me.pathAddition, data.id+'.tiff')
     fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(data,null,2) , (err) ->
@@ -102,10 +102,15 @@ class IO extends EventEmitter
         me.emit 'error', err
     me.sendLetter socket
 
+  onSkipLetter: (socket,data) ->
+    me = @
+    @sendings.push data.id
+    @sendLetter socket
+
   sendLetter: (socket) ->
     me = @
     data =
-      id: @sendings.pop()
+      id: @sendings.shift()
     if @sendings.length == 0
       @updateList()
 
@@ -144,26 +149,4 @@ class IO extends EventEmitter
         inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
         data.inlineimage = inlineimage
         socket.emit 'letter',data
-    regonizer.open name
-
-
-
-  onWork: (socket,data) ->
-    console.log 'work', data
-    me = @
-    ( me.clients[id].emit('work',data) for id of me.clients when socket.id!=id )
-    name = path.join(me.pathName, 'noaddress',data.id+'.tiff')
-    regonizer = new Regonizer
-    regonizer.setDebug false
-    regonizer.on 'error', (err) ->
-      socket.emit('do',data) #do something better
-    regonizer.on 'open', (res) ->
-      r = regonizer.outerbounding()
-      cropped = regonizer.image.crop r.x,r.y,r.width,r.height
-      cropped.rotate 270
-      cropped.toBufferAsync (err,buffer)->
-        inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
-        data.inlineimage = inlineimage
-        socket.emit('do',data)
-
-    regonizer.open name
+    regonizer.open name, false
