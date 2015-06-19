@@ -109,14 +109,21 @@ class IO extends EventEmitter
   onSaveLetter: (socket,data) ->
     me = @
     item =
-      codes: [ data.id ]
+      codes: [ data.code ]
       box: data.box
       street: data.street
       housenumber: data.housenumber
       housenumberExtension: data.housenumberExtension
       zipCode: data.zipCode
       town: data.town
+
+    file = path.join(me.pathName, me.pathAddition, data.id+'.tiff')
+    fs.rename file, path.join(me.pathName, 'good', path.basename(file)), (err) ->
+      if err
+        me.emit 'error', err
+
     me.watcher.io.emit 'new', item
+    @sendLetter socket
 
   onSkipLetter: (socket,data) ->
     me = @

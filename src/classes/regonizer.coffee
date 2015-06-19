@@ -308,11 +308,9 @@ class Regonizer extends EventEmitter
     searchtext = item.street+', '+item.zipCode+' '+item.town
     housenumber= item.housenumber
     @db.once 'sortbox', (res) ->
-      console.log 'sortbox',res
       item.box = res
       me.checkFindSortboxCounter()
     @db.once 'ocrhash', (res) ->
-      console.log 'findSortbox',res
       if res.length>0
         me.db.findSortbox res[0].ids, housenumber
       else
