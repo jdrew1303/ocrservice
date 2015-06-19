@@ -99,7 +99,7 @@ class Regonizer extends EventEmitter
             me.emit 'open', true
     else
       me.emit 'error', new Error('there is no image')
-      
+
   removeDoubleRect: (sorts)->
     result=[]
     lastrect = ""
@@ -308,9 +308,11 @@ class Regonizer extends EventEmitter
     searchtext = item.street+', '+item.zipCode+' '+item.town
     housenumber= item.housenumber
     @db.once 'sortbox', (res) ->
+      console.log 'sortbox',res
       item.box = res
       me.checkFindSortboxCounter()
     @db.once 'ocrhash', (res) ->
+      console.log 'findSortbox',res
       if res.length>0
         me.db.findSortbox res[0].ids, housenumber
       else
@@ -319,6 +321,9 @@ class Regonizer extends EventEmitter
 
   sortbox: ()->
     @text()
+    @sortboxAfterText()
+
+  sortboxAfterText: ()->
     @findSortboxCounter = @addresses.length+1
     @checkFindSortboxCounter()
     (@findSortbox item for item in @addresses)

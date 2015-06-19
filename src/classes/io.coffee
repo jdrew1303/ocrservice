@@ -47,6 +47,8 @@ class IO extends EventEmitter
       me.onBadLetter(socket, data)
     socket.on 'skip', (data) ->
       me.onSkipLetter(socket, data)
+    socket.on 'check', (data) ->
+      me.onCheck(socket, data)
 
   updateList: ()->
     me = @
@@ -85,6 +87,8 @@ class IO extends EventEmitter
       password: data.password
 
     socket.erp = new ERP options
+    socket.mywidth = data.mywidth
+
     socket.erp.on 'loginSuccess', (sid) ->
       me.sendLetter socket
     socket.erp.on 'loginError', (error) ->
@@ -106,6 +110,17 @@ class IO extends EventEmitter
     me = @
     @sendings.push data.id
     @sendLetter socket
+
+  onCheck: (socket,data) ->
+    me = @
+    console.log 'onCheck',data
+    regonizer = new Regonizer
+    regonizer.setDebug false
+    regonizer.addresses.push data
+    regonizer.once 'boxes', (boxes,codes) ->
+      console.log boxes,codes
+      socket.emit 'checked', boxes
+    regonizer.sortboxAfterText()
 
   sendLetter: (socket) ->
     me = @
@@ -145,6 +160,9 @@ class IO extends EventEmitter
 
       cropped = regonizer.image.crop r.x,r.y,r.width,r.height
       cropped.rotate 270
+      if typeof socket.mywidth == 'number'
+        ratio = socket.mywidth/r.width
+        cropped.resize  r.height*ratio, r.width*ratio
       cropped.toBufferAsync (err,buffer)->
         inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
         data.inlineimage = inlineimage
