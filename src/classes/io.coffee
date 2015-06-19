@@ -17,7 +17,7 @@ class IO extends EventEmitter
     @io = socketIO()
     @io.on 'connection', (opt) => @onIncommingConnection(opt)
     @pathAddition = 'noaddress'
-    discoverServer = new udpfindme.Server parseInt( variables.UI_DISCOVER_PORT )
+    discoverServer = new udpfindme.Server parseInt( variables.UI_DISCOVER_PORT  ) , '0.0.0.0'
     discoverMessage =
       port: variables.WEBSOCKET_PORT
       type: 'ocrservice'
