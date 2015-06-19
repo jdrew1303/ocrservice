@@ -95,7 +95,7 @@ class Watcher extends EventEmitter
         #@io_client = null
 
   socketServer: () ->
-    @io_client = new IO()
+    @io_client = new IO(@)
     @io_client.setPath(@pathName)
 
   watch: ()->

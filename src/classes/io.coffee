@@ -12,7 +12,8 @@ updfindme = require 'updfindme'
 # watching a directory for new files
 module.exports =
 class IO extends EventEmitter
-  constructor: (pathName)->
+  constructor: (watcher)->
+    @watcher = watcher
     @io = socketIO()
     @io.on 'connection', (opt) => @onIncommingConnection(opt)
     @pathAddition = 'noaddress'
@@ -45,6 +46,8 @@ class IO extends EventEmitter
       me.onLogin(socket, data)
     socket.on 'bad', (data) ->
       me.onBadLetter(socket, data)
+    socket.on 'save', (data) ->
+      me.onSaveLetter(socket, data)
     socket.on 'skip', (data) ->
       me.onSkipLetter(socket, data)
     socket.on 'check', (data) ->
@@ -60,9 +63,6 @@ class IO extends EventEmitter
       glob pattern, options, (err,matches) ->
         (me.sendings.push(me.short(name)) for name in matches when me.sendings.indexOf(me.short(name))==-1)
         me.io.emit('sendings',me.sendings)
-        #setTimeout me.updateList.bind(me), 2000
-    #else
-      #setTimeout me.updateList.bind(me), 2000
 
 
   onIncommingConnection: (socket) ->
@@ -106,6 +106,18 @@ class IO extends EventEmitter
         me.emit 'error', err
     me.sendLetter socket
 
+  onSaveLetter: (socket,data) ->
+    me = @
+    item =
+      codes: [ data.id ]
+      box: data.box
+      street: data.street
+      housenumber: data.housenumber
+      housenumberExtension: data.housenumberExtension
+      zipCode: data.zipCode
+      town: data.town
+    me.watcher.io.emit 'new', item
+
   onSkipLetter: (socket,data) ->
     me = @
     @sendings.push data.id
@@ -113,12 +125,10 @@ class IO extends EventEmitter
 
   onCheck: (socket,data) ->
     me = @
-    console.log 'onCheck',data
     regonizer = new Regonizer
     regonizer.setDebug false
     regonizer.addresses.push data
     regonizer.once 'boxes', (boxes,codes) ->
-      console.log boxes,codes
       socket.emit 'checked', boxes
     regonizer.sortboxAfterText()
 
