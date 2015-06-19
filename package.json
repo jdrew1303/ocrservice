@@ -35,7 +35,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
 
-    "updfindme": "*",
+    "udpfindme": "*",
     "require-all": "*",
     "socket.io": "*",
     "wocr": "*",

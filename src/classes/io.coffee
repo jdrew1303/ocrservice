@@ -7,7 +7,7 @@ variables = require '../variables'
 Regonizer = require '../classes/regonizer'
 ERP = require '../classes/erp'
 cv = require 'opencv'
-updfindme = require 'updfindme'
+udpfindme = require 'udpfindme'
 
 # watching a directory for new files
 module.exports =
@@ -17,7 +17,7 @@ class IO extends EventEmitter
     @io = socketIO()
     @io.on 'connection', (opt) => @onIncommingConnection(opt)
     @pathAddition = 'noaddress'
-    discoverServer = new updfindme.Server parseInt( variables.UI_DISCOVER_PORT )
+    discoverServer = new udpfindme.Server parseInt( variables.UI_DISCOVER_PORT )
     discoverMessage =
       port: variables.WEBSOCKET_PORT
       type: 'ocrservice'
