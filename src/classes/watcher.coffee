@@ -41,7 +41,10 @@ class Watcher extends EventEmitter
     @erp.on 'loginSuccess', (msg) => @onERPLoginSuccess(msg)
     @erp.on 'put', (msg) => @onERPPut(msg)
     @erp.on 'error', (msg) => @onERPPut(msg)
+    @erp.on 'connect', (msg) => @onERPConnect(msg)
 
+  onERPConnect: (msg) ->
+    @erp.login()
 
   onDiscoveryFound: (data,remote)->
     if typeof data.type == 'string'

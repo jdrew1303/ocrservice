@@ -52,7 +52,7 @@ class ERP extends EventEmitter
     debug 'connect_error', JSON.stringify(err,null,0)+' #'+@erp.id+' #'+socket.id
 
   onConnect: () ->
-
+    
     debug 'erp connect', @erp.id
 
   onDisconnect: () ->
@@ -91,7 +91,6 @@ class ERP extends EventEmitter
   getFastAccessTour: () ->
 
   put: (item) ->
-    console.log item
     if typeof @erp == 'object' and @erp.connected==true
       @erp.emit 'put', item
     else
