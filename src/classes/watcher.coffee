@@ -5,8 +5,9 @@ glob = require 'glob'
 IO = require '../classes/io'
 socket = require 'socket.io-client'
 variables = require '../variables'
-Recognizer = require '../classes/recognizer'
-DB = require '../classes/db'
+Recognizer = require './recognizer'
+DB = require './db'
+ERP = require './erp'
 
 # watching a directory for new files
 module.exports =
@@ -27,6 +28,26 @@ class Watcher extends EventEmitter
     @db.setLimit 100
     @db.on 'error', (err) ->
       throw err
+
+    options =
+      url: variables.ERP_URL
+      client: variables.ERP_CLIENT
+      login: variables.ERP_LOGIN
+      password: variables.ERP_PASSWORD
+    @erp = new ERP options
+    @erp.on 'loginError', (msg) => @onERPLoginError(msg)
+    @erp.on 'loginSuccess', (msg) => @onERPLoginSuccess(msg)
+    @erp.on 'put', (msg) => @onERPPut(msg)
+    @erp.on 'error', (msg) => @onERPPut(msg)
+
+  onERPLoginError: (msg) ->
+    console.log msg
+  onERPLoginSuccess: (msg) ->
+    console.log msg
+  onERPPut: (msg) ->
+    console.log msg
+  onERPError: (msg) ->
+    console.log msg
 
   socketConnected: ()->
     me = @
@@ -96,6 +117,7 @@ class Watcher extends EventEmitter
   socketServer: () ->
     @io_client = new IO(@)
     @io_client.setPath(@pathName)
+
 
   watch: ()->
     me = @

@@ -136,6 +136,7 @@ class IO extends EventEmitter
       else
         me.sendLetter socket
     me.watcher.io.emit 'new', item
+    socket.erp.put item
 
 
   onSkipLetter: (socket,data) ->

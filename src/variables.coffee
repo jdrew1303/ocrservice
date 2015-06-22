@@ -49,6 +49,8 @@ variables =
 
   ERP_URL: "http://localhost/wawi/index.php"
   ERP_CLIENT: "macc"
+  ERP_LOGIN: "sorter"
+  ERP_PASSWORD: ""
 
 (variables[name] = process.env[name] for name of variables when process.env[name]? )
 
