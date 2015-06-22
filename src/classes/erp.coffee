@@ -40,35 +40,47 @@ class ERP extends EventEmitter
     @erp.on 'connect_error', (err) => @onConnectError(@erp,err)
     @erp.on 'connect', (socket) => @onConnect(socket)
     @erp.on 'disconnect', (socket) => @onDisconnect(socket)
-    @erp.on 'login', (data) => @onLogin(@erp,data)
+    @erp.on 'loginSuccess', (data) => @onLoginSuccess(@erp,data)
+    @erp.on 'loginError', (data) => @onLoginError(@erp,data)
     @erp.on 'logout', (data) => @onLogout(@erp,data)
     @erp.on 'put', (data) => @onPut(@erp,data)
     @erp.connect()
+    @emit 'connect'
 
   onConnectError: (socket,err) ->
     @erp.disconnect()
     debug 'connect_error', JSON.stringify(err,null,0)+' #'+@erp.id+' #'+socket.id
 
   onConnect: () ->
-    debug 'connect', @erp.id
+
+    debug 'erp connect', @erp.id
 
   onDisconnect: () ->
     debug 'disconnect', @erp.id
 
   login: () ->
+    debug 'erp login'
     if @sid!=''
       @logout()
     opt =
       client: @options.client,
       login: @options.login,
       password: @options.password
-    if typeof @erp == 'object' and @erp.connected==true
+
+    if @erp?.connected==true
       @erp.emit 'login', opt
     else
+      error 'erp', 'not connected'
       @emit 'error', 'not connected'
-  onLogin: (socket,data) ->
+
+  onLoginSuccess: (socket,data) ->
     @sid = data
+    debug 'erp on login', data
     @emit 'loginSuccess', data
+  onLoginError: (socket,data) ->
+    @sid = data
+    debug 'erp on login error', data
+    @emit 'loginError', data
 
   logout: () ->
     if typeof @erp == 'object' and @erp.connected==true

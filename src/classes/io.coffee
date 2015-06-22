@@ -91,12 +91,15 @@ class IO extends EventEmitter
     socket.erp = new ERP options
     socket.mywidth = data.mywidth
 
+    socket.erp.on 'connect', () ->
+      socket.erp.login()
     socket.erp.on 'loginSuccess', (sid) ->
+      debug 'loginSuccess**',sid
       socket.emit 'loginSuccess', sid
       me.sendLetter socket
     socket.erp.on 'loginError', (error) ->
       socket.emit 'loginError', error
-    socket.erp.login()
+
 
   onBadLetter: (socket,data) ->
     me = @
