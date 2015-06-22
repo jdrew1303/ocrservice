@@ -91,6 +91,7 @@ class ERP extends EventEmitter
   getFastAccessTour: () ->
 
   put: (item) ->
+    console.log item
     if typeof @erp == 'object' and @erp.connected==true
       @erp.emit 'put', item
     else
