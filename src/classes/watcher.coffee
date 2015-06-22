@@ -8,6 +8,7 @@ variables = require '../variables'
 Recognizer = require './recognizer'
 DB = require './db'
 ERP = require './erp'
+udpfindme = require 'udpfindme'
 
 # watching a directory for new files
 module.exports =
@@ -19,30 +20,61 @@ class Watcher extends EventEmitter
     @files = []
     @fileIndex = 0
 
-    @io = socket variables.OCR_SOCKET_IO_HOST
-    @io.on 'connect', @socketConnected.bind(@)
-    @io.on 'disconnect', @socketDisconnected.bind(@)
-    @io.on 'start', @start.bind(@)
-    @io.on 'stop', @stop.bind(@)
+    @discovery = new udpfindme.Discovery 31111
+    @discovery.on 'found', (data,remote) => @onDiscoveryFound(data,remote)
+    @discovery.on 'timeout', () => @onDiscoveryTimout()
+    @discovery.discover()
+
+
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
     @db.setLimit 100
     @db.on 'error', (err) ->
       throw err
 
     options =
-      url: variables.ERP_URL
       client: variables.ERP_CLIENT
       login: variables.ERP_LOGIN
       password: variables.ERP_PASSWORD
+
     @erp = new ERP options
     @erp.on 'loginError', (msg) => @onERPLoginError(msg)
     @erp.on 'loginSuccess', (msg) => @onERPLoginSuccess(msg)
     @erp.on 'put', (msg) => @onERPPut(msg)
     @erp.on 'error', (msg) => @onERPPut(msg)
 
+
+  onDiscoveryFound: (data,remote)->
+    if typeof data.type == 'string'
+      if data.type == 'sorter'
+        @url = 'http://'+remote.address+':'+data.port+'/'
+        if not @io?.connected
+          @setIoConnectTimer()
+
+  setIoConnectTimer: ()->
+    if typeof @ioConnectTimer!='undefined'
+      clearTimeout @ioConnectTimer
+    @ioConnectTimer = setTimeout @setIO.bind(@), 1000
+
+  setIO: () ->
+    opt =
+      autoConnect: false
+    debug 'watcher dispatcher',@url
+    @io = socket @url, opt
+    @io.on 'connect', @socketConnected.bind(@)
+    @io.on 'disconnect', @socketDisconnected.bind(@)
+    @io.on 'start', @start.bind(@)
+    @io.on 'stop', @stop.bind(@)
+    @io.connect()
+
+
+  onDiscoveryTimout: () ->
+    @discovery.discover()
+
+
   onERPLoginError: (msg) ->
     console.log msg
   onERPLoginSuccess: (msg) ->
+    @start()
     console.log msg
   onERPPut: (msg) ->
     console.log msg
@@ -127,6 +159,7 @@ class Watcher extends EventEmitter
       options =
         cwd: me.pathName
       pattern = variables.OCR_WATCH_PATTERN
+      debug 'watch','glob'
       glob pattern, options, (err,matches) ->
         if err
           me.emit 'error',err
@@ -171,6 +204,7 @@ class Watcher extends EventEmitter
               console.trace err
               me.emit 'error', err
             else
+              me.erp.put res[0]
               me.io.emit 'new',res[0]
 
         else
