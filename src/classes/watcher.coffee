@@ -29,6 +29,7 @@ class Watcher extends EventEmitter
       throw err
 
     options =
+      key: 'watcher'
       client: variables.ERP_CLIENT
       login: variables.ERP_LOGIN
       password: variables.ERP_PASSWORD
@@ -174,7 +175,7 @@ class Watcher extends EventEmitter
           else
             setTimeout me.nextFile.bind(me), 1
       else
-        if res.length == 0
+        if res.length == 0 or res[0].box.length==0
           #no address
           name = codes.join('.')
           fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
@@ -193,6 +194,7 @@ class Watcher extends EventEmitter
               console.trace err
               me.emit 'error', err
             else
+              debug 'put', res
               me.erp.put res[0]
 
         else
@@ -266,9 +268,11 @@ class Watcher extends EventEmitter
     if not @run
       false
     else
-      if me.fileIndex == me.files.length
+      if me.fileIndex == me.files.length or me.files.length==0
         me.debugMessage 'wait for next turn'
         setTimeout me.watch.bind(me), me.intervalTimeout
       else
+        console.log me.pathName, me.files, me.fileIndex, me.files[me.fileIndex]
+
         me.debugMessage 'check file',path.join(me.pathName, me.files[me.fileIndex])
         me.checkFile()

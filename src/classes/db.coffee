@@ -212,7 +212,7 @@ class DB extends EventEmitter
       *
     FROM
     fast_access_tour
-    WHERE strid in ("""+id+""") and regiogruppe='Zustellung'
+    WHERE strid in ("""+id+""")
     """
 
     m = @

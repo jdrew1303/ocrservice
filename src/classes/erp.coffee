@@ -31,12 +31,12 @@ class ERP extends EventEmitter
 
 
   setErp: () ->
-    debug 'io connect',@erp?.connected
+    debug 'set erp connect',@options.key
     opt =
       autoConnect: false
 
     @erp = client @url, opt
-    debug 'start', 'set up io '+@url+''
+    debug 'start', 'set up erp io '+@url+''+' '+@options.key
     @erp.on 'connect_error', (err) => @onConnectError(@erp,err)
     @erp.on 'connect', (socket) => @onConnect(socket)
     @erp.on 'disconnect', (socket) => @onDisconnect(socket)
@@ -52,11 +52,11 @@ class ERP extends EventEmitter
     debug 'connect_error', JSON.stringify(err,null,0)+' #'+@erp.id+' #'+socket.id
 
   onConnect: () ->
-    debug 'erp connect', @erp.id
+    debug 'erp connect', @options.key
     @emit 'connect'
 
   onDisconnect: () ->
-    @emit 'disconnect', true
+    @emit 'disconnect', @options.key
     debug 'disconnect', '.'
 
   login: () ->

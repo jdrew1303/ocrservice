@@ -40,20 +40,13 @@ class IO extends EventEmitter
 
   initSocketEvents: (socket) ->
     me = @
-    socket.on 'disconnect', (data) ->
-      me.onDisconnect(socket, data)
-    socket.on 'login', (data) ->
-      me.onLogin(socket, data)
-    socket.on 'bad', (data) ->
-      me.onBadLetter(socket, data)
-    socket.on 'save', (data) ->
-      me.onSaveLetter(socket, data)
-    socket.on 'skip', (data) ->
-      me.onSkipLetter(socket, data)
-    socket.on 'check', (data) ->
-      me.onCheck(socket, data)
-    socket.on 'send', (data) ->
-      me.sendLetter(socket)
+    socket.on 'disconnect', (data) => @onDisconnect(socket,data)
+    socket.on 'login', (data) => @onLogin(socket,data)
+    socket.on 'bad', (data) => @onBadLetter(socket,data)
+    socket.on 'save', (data) => @onSaveLetter(socket,data)
+    socket.on 'skip', (data) => @onSkipLetter(socket,data)
+    socket.on 'check', (data) => @onCheck(socket,data)
+    socket.on 'send', (data) => @sendLetter(socket,data)
 
   updateList: ()->
     me = @
@@ -68,38 +61,25 @@ class IO extends EventEmitter
 
 
   onIncommingConnection: (socket) ->
-    console.log 'onIncommingConnection',socket.id
+    debug 'onIncommingConnection',socket.id
     @clients[ socket.id ] = socket
     @initSocketEvents(socket)
     socket.emit 'loginRequired'
 
   onDisconnect: (socket) ->
-    if @clients[ socket.id ].erp?
-      @clients[ socket.id ].erp.logout()
-
+    debug 'onDisconnect', socket.id
     delete @clients[ socket.id ]
-    console.log 'onDisconnect'
+
 
   onLogin: (socket,data)->
     me = @
     options =
-      url: variables.ERP_URL
-      client: variables.ERP_CLIENT
+      key: 'IO'
       login: data.login
       password: data.password
-
-    socket.erp = new ERP options
-    socket.mywidth = data.mywidth
-
-    socket.erp.on 'connect', () ->
-      socket.erp.login()
-    socket.erp.on 'loginSuccess', (sid) ->
-      debug 'loginSuccess**',sid
-      socket.emit 'loginSuccess', sid
-      me.sendLetter socket
-    socket.erp.on 'loginError', (error) ->
-      socket.emit 'loginError', error
-
+    warn 'io line 82','fix me!'
+    socket.emit 'loginSuccess', @watcher.erp.sid
+    @sendLetter socket
 
   onBadLetter: (socket,data) ->
     me = @
@@ -119,7 +99,7 @@ class IO extends EventEmitter
     me = @
     item =
       codes: [ data.code ]
-      box: data.box
+      box: [data.box]
       street: data.street
       housenumber: data.housenumber
       housenumberExtension: data.housenumberExtension
@@ -138,8 +118,8 @@ class IO extends EventEmitter
             me.sendLetter socket
       else
         me.sendLetter socket
-    me.watcher.io.emit 'new', item
-    socket.erp.put item
+    debug 'io put',item
+    me.watcher.erp.put item
 
 
   onSkipLetter: (socket,data) ->
@@ -156,7 +136,7 @@ class IO extends EventEmitter
       socket.emit 'checked', boxes
     recognizer.sortboxAfterText()
 
-  sendLetter: (socket) ->
+  sendLetter: (socket, data) ->
     me = @
     if @sendings.length == 0
       socket.emit 'empty', true
