@@ -44,6 +44,7 @@ class ERP extends EventEmitter
     @erp.on 'loginError', (data) => @onLoginError(@erp,data)
     @erp.on 'logout', (data) => @onLogout(@erp,data)
     @erp.on 'put', (data) => @onPut(@erp,data)
+    @erp.on 'fastaccess', (data) => @onFastAccess(@erp,data)
     @erp.connect()
 
   onConnectError: (socket,err) ->
@@ -55,7 +56,8 @@ class ERP extends EventEmitter
     @emit 'connect'
 
   onDisconnect: () ->
-    debug 'disconnect', @erp.id
+    @emit 'disconnect', true
+    debug 'disconnect', '.'
 
   login: () ->
     debug 'erp login'
@@ -76,10 +78,14 @@ class ERP extends EventEmitter
     @sid = data
     debug 'erp on login', data
     @emit 'loginSuccess', data
-  onLoginError: (socket,data) ->
-    @sid = data
-    debug 'erp on login error', data
+  onLoginError: (socket,msg) ->
+    @sid = ''
+    debug 'erp', msg
     @emit 'loginError', data
+
+  onFastAccess: (socket,list) ->
+    debug 'erp', 'on fastaccess'
+    @emit 'fastaccess', list
 
   logout: () ->
     if typeof @erp == 'object' and @erp.connected==true
@@ -87,7 +93,11 @@ class ERP extends EventEmitter
     @sid = ''
     @emit 'logged out'
 
-  getFastAccessTour: () ->
+  fastaccess: () ->
+    if typeof @erp == 'object' and @erp.connected==true
+      @erp.emit 'fastaccess', {}
+    else
+      @emit 'error', 'not connected'
 
   put: (item) ->
     if typeof @erp == 'object' and @erp.connected==true

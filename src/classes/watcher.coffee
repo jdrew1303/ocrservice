@@ -20,14 +20,11 @@ class Watcher extends EventEmitter
     @files = []
     @fileIndex = 0
 
-    @discovery = new udpfindme.Discovery 31111
-    @discovery.on 'found', (data,remote) => @onDiscoveryFound(data,remote)
-    @discovery.on 'timeout', () => @onDiscoveryTimout()
-    @discovery.discover()
-
 
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
     @db.setLimit 100
+    @db.on 'updated', (num) => @onDBUpdated(num)
+
     @db.on 'error', (err) ->
       throw err
 
@@ -40,48 +37,32 @@ class Watcher extends EventEmitter
     @erp.on 'loginError', (msg) => @onERPLoginError(msg)
     @erp.on 'loginSuccess', (msg) => @onERPLoginSuccess(msg)
     @erp.on 'put', (msg) => @onERPPut(msg)
-    @erp.on 'error', (msg) => @onERPPut(msg)
+    @erp.on 'fastaccess', (msg) => @onERPFastAccess(msg)
+    @erp.on 'error', (msg) => @onERPError(msg)
     @erp.on 'connect', (msg) => @onERPConnect(msg)
+    @erp.on 'disconnect', (msg) => @onERPDisconnect(msg)
 
   onERPConnect: (msg) ->
     debug 'erp login', '---'
     @erp.login()
-
-  onDiscoveryFound: (data,remote)->
-    if typeof data.type == 'string'
-      if data.type == 'sorter'
-        @url = 'http://'+remote.address+':'+data.port+'/'
-        if not @io?.connected
-          @setIoConnectTimer()
-
-  setIoConnectTimer: ()->
-    if typeof @ioConnectTimer!='undefined'
-      clearTimeout @ioConnectTimer
-    @ioConnectTimer = setTimeout @setIO.bind(@), 1000
-
-  setIO: () ->
-    opt =
-      autoConnect: false
-    debug 'watcher dispatcher',@url
-    @io = socket @url, opt
-    @io.on 'connect', @socketConnected.bind(@)
-    @io.on 'disconnect', @socketDisconnected.bind(@)
-    @io.on 'start', @start.bind(@)
-    @io.on 'stop', @stop.bind(@)
-    @io.connect()
-
-
-  onDiscoveryTimout: () ->
-    @discovery.discover()
+  onERPDisconnect: () ->
+    debug 'erp disconnect', '---'
+    @run=false
 
 
   onERPLoginError: (msg) ->
     console.log msg
   onERPLoginSuccess: (msg) ->
-    @start()
-    console.log msg
+    @erp.fastaccess()
+    debug 'watcher','login success'
   onERPPut: (msg) ->
     setTimeout @nextFile.bind(@), 1
+  onERPFastAccess: (list) ->
+    debug 'watcher', 'on fastaccess '+list.length
+    @db.fastaccess(list)
+  onDBUpdated: (num) ->
+    debug 'updated', 'ready'
+    @start()
 
   onERPError: (msg) ->
     console.log msg
