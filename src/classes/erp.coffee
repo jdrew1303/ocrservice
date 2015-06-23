@@ -45,15 +45,14 @@ class ERP extends EventEmitter
     @erp.on 'logout', (data) => @onLogout(@erp,data)
     @erp.on 'put', (data) => @onPut(@erp,data)
     @erp.connect()
-    @emit 'connect'
 
   onConnectError: (socket,err) ->
     @erp.disconnect()
     debug 'connect_error', JSON.stringify(err,null,0)+' #'+@erp.id+' #'+socket.id
 
   onConnect: () ->
-    
     debug 'erp connect', @erp.id
+    @emit 'connect'
 
   onDisconnect: () ->
     debug 'disconnect', @erp.id

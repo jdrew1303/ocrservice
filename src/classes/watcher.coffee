@@ -44,6 +44,7 @@ class Watcher extends EventEmitter
     @erp.on 'connect', (msg) => @onERPConnect(msg)
 
   onERPConnect: (msg) ->
+    debug 'erp login', '---'
     @erp.login()
 
   onDiscoveryFound: (data,remote)->
@@ -80,7 +81,8 @@ class Watcher extends EventEmitter
     @start()
     console.log msg
   onERPPut: (msg) ->
-    console.log msg
+    setTimeout @nextFile.bind(@), 1
+
   onERPError: (msg) ->
     console.log msg
 
@@ -186,8 +188,10 @@ class Watcher extends EventEmitter
         name = me.current_stat.ctime.getTime()
         fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
           if err
+            console.trace err
             me.emit 'error', err
-
+          else
+            setTimeout me.nextFile.bind(me), 1
       else
         if res.length == 0
           #no address
@@ -196,19 +200,19 @@ class Watcher extends EventEmitter
             if err
               console.trace err
               me.emit 'error', err
+            else
+              setTimeout me.nextFile.bind(me), 1
 
 
         else if res.length == 1
 
           name = res[0].codes.join('.')
-          console.log(file, path.join(me.pathName, 'good', name+path.extname(file)))
           fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
             if err
               console.trace err
               me.emit 'error', err
             else
               me.erp.put res[0]
-              me.io.emit 'new',res[0]
 
         else
           name = res[0].codes.join('.')
@@ -219,11 +223,11 @@ class Watcher extends EventEmitter
               me.emit 'error', err
           fs.writeFile path.join(me.pathName, 'unclear', name+'.txt'), JSON.stringify(res,null,2) , (err) ->
             if err
+              console.trace err
               me.emit 'error', err
+            else
+              setTimeout me.nextFile.bind(me), 1
 
-      me.debugMessage JSON.stringify(res,null,2)
-      me.debugMessage 'next'
-      setTimeout me.nextFile.bind(me), 1
 
   statFile: (err,stat)->
     me = @
