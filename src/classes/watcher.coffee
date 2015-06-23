@@ -175,7 +175,7 @@ class Watcher extends EventEmitter
           else
             setTimeout me.nextFile.bind(me), 1
       else
-        if res.length == 0 or res[0].box.length==0
+        if res.length == 0 or typeof res[0].box == 'undefined' or res[0].box.length==0
           #no address
           name = codes.join('.')
           fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
