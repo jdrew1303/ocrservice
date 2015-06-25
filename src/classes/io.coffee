@@ -46,6 +46,7 @@ class IO extends EventEmitter
     socket.on 'save', (data) => @onSaveLetter(socket,data)
     socket.on 'skip', (data) => @onSkipLetter(socket,data)
     socket.on 'check', (data) => @onCheck(socket,data)
+    socket.on 'empty', (data) => @onEmpty(socket,data)
     socket.on 'send', (data) => @sendLetter(socket,data)
 
   updateList: ()->
@@ -93,6 +94,9 @@ class IO extends EventEmitter
           if err
             me.emit 'error', err
     me.sendLetter socket
+
+  onEmpty: (socket,data) ->
+    @sendLetter(socket, data)
 
   onSaveLetter: (socket,data) ->
     console.log 'onSaveLetter 1', data.id, @sendings
@@ -157,8 +161,10 @@ class IO extends EventEmitter
         r = recognizer.outerbounding()
         item =
           rect: r
+        recognizer.barcode()
         recognizer.getText item
 
+        data.codes = recognizer.barcodes
         data.txt = recognizer.texts
         data.zipCode = ""
         data.town = ""
@@ -167,7 +173,7 @@ class IO extends EventEmitter
         data.housenumberExtension = ""
 
         if data.txt.length>0
-          adr = recognizer.getAddress data.txt[0]
+          adr = recognizer.getAddress data.txt[0], true
           data.adr = adr
           data.zipCode = adr.zipCode
           data.town = adr.town

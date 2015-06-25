@@ -67,7 +67,10 @@ class Recognizer extends EventEmitter
 
   setDebug: (mode)->
     @debug = mode
+
+
   open: (fileName,brightness)->
+    debug 'open', fileName+' #'+brightness
     me = @
     if typeof brightness == 'undefined'
       brightness=true
@@ -228,8 +231,8 @@ class Recognizer extends EventEmitter
     @barcodes.sort lengthRanking
     @barcodes
 
-  getAddress: (item)->
-    adr = @extract.extractAddress item
+  getAddress: (item,force)->
+    adr = @extract.extractAddress item,force
     if adr.state
       @addresses.push adr
     adr

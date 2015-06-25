@@ -51,10 +51,12 @@ APP_DIR="{cwd}"
 NODE_APP="bin/ocrservice-watch"
 APP_PARAMS="{prefix}"
 CONFIG_DIR="$APP_DIR"
-PID_DIR="$APP_DIR/pid"
-PID_FILE="$PID_DIR/app.pid"
-LOG_DIR="$APP_DIR/log"
-LOG_FILE="$LOG_DIR/app.log"
+PID_DIR="/var/log"
+PID_FILE="$PID_DIR/ocrservice-watch.pid"
+LOG_DIR="/var/log"
+LOG_FILE="$LOG_DIR/ocrservice-watch.log"
+OUT_LOG_FILE="$LOG_DIR/ocrservice-watch.out.log"
+ERR_LOG_FILE="$LOG_DIR/ocrservice-watch.err.log"
 NODE_EXEC=$(which node)
 
 
@@ -80,15 +82,27 @@ start_it() {
 
     echo "Starting node app ..."
     {vars}
-    NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP" $APP_PARAMS 1>"$LOG_FILE" 2>&1 &
-    echo $! > "$PID_FILE"
-    echo "Node app started with pid $!"
+    #NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP" $APP_PARAMS 1>"$LOG_FILE" 2>&1 &
+    forever \\
+      --sourceDir=$APP_DIR \\
+      -p $PID_FILE  \\
+      -l $LOG_FILE \\
+      -o $OUT_LOG_FILE \\
+      -e $ERR_LOG_FILE \\
+      start $NODE_APP $APP_PARAMS
+
+    #echo $! > "$PID_FILE"
+    #echo "Node app started with pid $!"
 }
 
 stop_process() {
-    PID=$(get_pid)
-    echo "Killing process $PID"
-    kill $PID
+    forever \\
+      --sourceDir=$APP_DIR \\
+      -p $PID_FILE  \\
+      -l $LOG_FILE \\
+      -o $OUT_LOG_FILE \\
+      -e $ERR_LOG_FILE \\
+      stop $NODE_APP $APP_PARAMS
 }
 
 remove_pid_file() {

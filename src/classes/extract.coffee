@@ -34,7 +34,9 @@ class Extract extends EventEmitter
         result.housenumberExtension = result.housenumberExtension.trim()
     result
   # return an object of all address items including housenumber parts
-  extractAddress: (str)->
+  extractAddress: (str,force)->
+    if typeof force=='undefined'
+      force=false
     result =
       name: ""
       street: ""
@@ -59,7 +61,7 @@ class Extract extends EventEmitter
       result.message = "found zip code"
       if found and i>0
         result.town = textLines[i].replace(result.zipCode,'').trim()
-        if /[0-9]/.test(result.town)
+        if /[0-9]/.test(result.town) and not force==true
           result.message = "town contains none sense"
         else
           result.message = "found town"
