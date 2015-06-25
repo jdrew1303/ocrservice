@@ -8,8 +8,10 @@ This package is a part of services for letter sorting machine. Ocrservice is the
 ## Install
 
 ```
+npm install forever -g
 npm install ocrservice -g
 ```
+
 
 
 ## Usage
@@ -23,13 +25,18 @@ ocrservice install myservicename /my/image/path/
 or as init.d script
 
 ```
-ocrservice install --initscript myservicename /my/image/path/
+ocrservice install --type init myservicename /my/image/path/
 ```
 
 You can install/run more than one service. So it is possible to try a second run with different parameters. To see all parameters run.
+
 
 ```
 ocrservice variables
 ```
 
 The *systemd* service reads that variables from /etc/sysconfig/myservicename. The init.d script keeps that variables inside.
+
+##debian notes
+
+See [https://thomashunter.name/blog/running-a-node-js-process-on-debian-as-an-init-d-service/]
