@@ -45,9 +45,7 @@ variables =
   OCR_DB_USER: "root"
   OCR_DB_PASSWORD: ""
   OCR_DB_HOST: "localhost"
-  OCR_SOCKET_IO_HOST: "http://localhost:3000"
-
-  ERP_URL: "http://localhost/wawi/index.php"
+  
   ERP_CLIENT: "macc"
   ERP_LOGIN: "sorter"
   ERP_PASSWORD: ""

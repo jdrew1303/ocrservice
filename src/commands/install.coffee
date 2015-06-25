@@ -84,12 +84,12 @@ start_it() {
     {vars}
     #NODE_ENV="$NODE_ENV" NODE_CONFIG_DIR="$CONFIG_DIR" $NODE_EXEC "$APP_DIR/$NODE_APP" $APP_PARAMS 1>"$LOG_FILE" 2>&1 &
     forever \\
-      --sourceDir=$APP_DIR \\
       -p $PID_FILE  \\
       -l $LOG_FILE \\
       -o $OUT_LOG_FILE \\
       -e $ERR_LOG_FILE \\
-      start $NODE_APP $APP_PARAMS
+      --append \\
+      start $APP_DIR/$NODE_APP $APP_PARAMS
 
     #echo $! > "$PID_FILE"
     #echo "Node app started with pid $!"
@@ -97,12 +97,12 @@ start_it() {
 
 stop_process() {
     forever \\
-      --sourceDir=$APP_DIR \\
+      -m 1 \\
       -p $PID_FILE  \\
       -l $LOG_FILE \\
       -o $OUT_LOG_FILE \\
       -e $ERR_LOG_FILE \\
-      stop $NODE_APP $APP_PARAMS
+      stop $APP_DIR/$NODE_APP
 }
 
 remove_pid_file() {
@@ -111,51 +111,11 @@ remove_pid_file() {
 }
 
 start_app() {
-    if pid_file_exists
-    then
-        if is_running
-        then
-            PID=$(get_pid)
-            echo "Node app already running with pid $PID"
-            exit 1
-        else
-            echo "Node app stopped, but pid file exists"
-            if [ $FORCE_OP = true ]
-            then
-                echo "Forcing start anyways"
-                remove_pid_file
-                start_it
-            fi
-        fi
-    else
-        start_it
-    fi
+    start_it
 }
 
 stop_app() {
-    if pid_file_exists
-    then
-        if is_running
-        then
-            echo "Stopping node app ..."
-            stop_process
-            remove_pid_file
-            echo "Node app stopped"
-        else
-            echo "Node app already stopped, but pid file exists"
-            if [ $FORCE_OP = true ]
-            then
-                echo "Forcing stop anyways ..."
-                remove_pid_file
-                echo "Node app stopped"
-            else
-                exit 1
-            fi
-        fi
-    else
-        echo "Node app already stopped, pid file does not exist"
-        exit 1
-    fi
+    stop_process
 }
 
 status_app() {
@@ -323,7 +283,7 @@ class Install extends Command
     (@envcontent.push(name+'='+variables[name]) for name of variables)
 
     @vars = []
-    (@vars.push(name+'="'+variables[name]+'"') for name of variables)
+    (@vars.push('   export '+name+'="'+variables[name]+'"') for name of variables)
     @initdfile = @initdfile.replace /\{vars\}/g, @vars.join("\n")
 
     @options = options
