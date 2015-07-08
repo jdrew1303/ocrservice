@@ -6,7 +6,7 @@
   "bin": {
     "ocrservice": "./bin/ocrservice"
   },
-  "version": "0.1.20",
+  "version": "0.1.21",
   "engines": {
     "node": ">=0.12.0"
   },

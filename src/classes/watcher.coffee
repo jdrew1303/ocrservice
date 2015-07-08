@@ -176,14 +176,7 @@ class Watcher extends EventEmitter
             setTimeout me.nextFile.bind(me), 1
       else
         if res.length == 0 or typeof res[0].box == 'undefined' or res[0].box.length==0
-          #no address
-          name = codes.join('.')
-          fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
-            if err
-              console.trace err
-              me.emit 'error', err
-            else
-              setTimeout me.nextFile.bind(me), 1
+          me.fullScann(codes)
 
 
         else if res.length == 1
@@ -276,3 +269,54 @@ class Watcher extends EventEmitter
 
         me.debugMessage 'check file',path.join(me.pathName, me.files[me.fileIndex])
         me.checkFile()
+
+
+  fullScann: (codes) ->
+    me = @
+    file = path.join(me.pathName, me.files[me.fileIndex])
+
+    debug 'fullscann', file
+    recognizer = new Recognizer
+    recognizer.setDebug false
+    recognizer.on 'error', (err) ->
+      me.noAddress(codes)
+
+    recognizer.on 'open', (res) ->
+      r = recognizer.outerbounding()
+      item =
+        rect: r
+      recognizer.barcode()
+      recognizer.getText item
+      data.codes = recognizer.barcodes
+      data.txt = recognizer.texts
+      data.zipCode = ""
+      data.town = ""
+      data.street = ""
+      data.housenumber = ""
+      data.housenumberExtension = ""
+      if data.txt.length>0
+        adr = recognizer.getAddress data.txt[0], true
+        data.adr = adr
+        data.zipCode = adr.zipCode
+        data.town = adr.town
+        data.street = adr.street
+        data.housenumber = adr.housenumber
+        data.housenumberExtension = adr.housenumberExtension
+      debug 'sortboxAfterText', data
+      recognizer.addresses.push data
+      recognizer.sortboxAfterText()
+
+    recognizer.once 'boxes', (boxes,codes) ->
+      console.log boxes
+      process.exit()
+    recognizer.open name, false
+  noAddress: (codes) ->
+    #no address
+    file = path.join(me.pathName, me.files[me.fileIndex])
+    name = codes.join('.')
+    fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
+      if err
+        console.trace err
+        me.emit 'error', err
+      else
+        setTimeout me.nextFile.bind(me), 1
