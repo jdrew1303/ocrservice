@@ -42,6 +42,7 @@ class IO extends EventEmitter
     me = @
     socket.on 'disconnect', (data) => @onDisconnect(socket,data)
     socket.on 'login', (data) => @onLogin(socket,data)
+    socket.on 'size', (data) => @onSize(socket,data)
     socket.on 'bad', (data) => @onBadLetter(socket,data)
     socket.on 'save', (data) => @onSaveLetter(socket,data)
     socket.on 'skip', (data) => @onSkipLetter(socket,data)
@@ -71,6 +72,10 @@ class IO extends EventEmitter
     debug 'onDisconnect', socket.id
     delete @clients[ socket.id ]
 
+  onSize: (socket,data)->
+    socket.mywidth = data.width
+    socket.myheight = data.height
+    debug 'onSize', data
 
   onLogin: (socket,data)->
     me = @
@@ -183,8 +188,12 @@ class IO extends EventEmitter
 
         cropped = recognizer.image.crop r.x,r.y,r.width,r.height
         cropped.rotate 270
+        cropped.brightness - 30
+        cropped.equalizeHist()
         if typeof socket.mywidth == 'number'
-          ratio = socket.mywidth/r.width
+          ratioW = socket.mywidth / r.width
+          ratioH = socket.myheight / r.height
+          ratio = Math.max ratioW, ratioH
           cropped.resize  r.height*ratio, r.width*ratio
         cropped.toBufferAsync (err,buffer)->
           inlineimage = "data:image/jpeg;base64,"+buffer.toString('base64')
