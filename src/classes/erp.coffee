@@ -81,7 +81,7 @@ class ERP extends EventEmitter
   onLoginError: (socket,msg) ->
     @sid = ''
     debug 'erp', msg
-    @emit 'loginError', data
+    @emit 'loginError', msg
 
   onFastAccess: (socket,list) ->
     debug 'erp', 'on fastaccess'
