@@ -146,7 +146,7 @@ class Watcher extends EventEmitter
       options =
         cwd: me.pathName
       pattern = variables.OCR_WATCH_PATTERN
-      debug 'watch','glob'
+      #debug 'watch','glob'
       glob pattern, options, (err,matches) ->
         if err
           me.emit 'error',err
