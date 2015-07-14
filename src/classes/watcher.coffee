@@ -310,7 +310,7 @@ class Watcher extends EventEmitter
 
     recognizer.once 'boxes', (boxes,codes) ->
       name = codes.join('.')
-      if boxes.length>0
+      if boxes.length>0 and codes.length>0
         boxes[0].codes = codes
         fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
           if err
