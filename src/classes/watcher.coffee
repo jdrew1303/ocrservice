@@ -307,8 +307,16 @@ class Watcher extends EventEmitter
       recognizer.sortboxAfterText()
 
     recognizer.once 'boxes', (boxes,codes) ->
-      console.log boxes
-      process.exit()
+      console.log boxes,codes
+      name = boxes.codes.join('.')
+      fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
+        if err
+          console.trace err
+          me.emit 'error', err
+        else
+          debug 'put', boxes
+          me.erp.put boxes[0]
+
     recognizer.open name, false
   noAddress: (codes) ->
     #no address
