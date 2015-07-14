@@ -321,6 +321,9 @@ class Watcher extends EventEmitter
             debug 'put', boxes
             me.erp.put boxes[0]
       else
+        if failpath=='nocode'
+          name = me.current_stat.ctime.getTime()
+        
         console.log path.join(me.pathName, failpath, name+path.extname(file))
         fs.rename file, path.join(me.pathName, failpath, name+path.extname(file)), (err) ->
           if err
