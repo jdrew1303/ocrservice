@@ -276,7 +276,7 @@ class Watcher extends EventEmitter
     me = @
     file = path.join(me.pathName, me.files[me.fileIndex])
 
-    debug 'fullscann', file
+    debug 'fullscann', file,'failpath',failpath
     recognizer = new Recognizer
     recognizer.setDebug false
     recognizer.on 'error', (err) ->
@@ -310,8 +310,9 @@ class Watcher extends EventEmitter
 
     recognizer.once 'boxes', (boxes,codes) ->
       name = codes.join('.')
-      if boxes.length>0 and codes.length>0
+      if boxes.length>0 and codes.length>0 and boxes[0].box.length>0
         boxes[0].codes = codes
+        console.log path.join(me.pathName, 'good', name+path.extname(file))
         fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
           if err
             console.trace err
@@ -320,6 +321,7 @@ class Watcher extends EventEmitter
             debug 'put', boxes
             me.erp.put boxes[0]
       else
+        console.log path.join(me.pathName, failpath, name+path.extname(file))
         fs.rename file, path.join(me.pathName, failpath, name+path.extname(file)), (err) ->
           if err
             console.trace err
