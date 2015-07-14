@@ -167,16 +167,17 @@ class Watcher extends EventEmitter
       file = path.join(me.pathName, me.files[me.fileIndex])
       if codes.length == 0
         #no code
-        name = me.current_stat.ctime.getTime()
-        fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
-          if err
-            console.trace err
-            me.emit 'error', err
-          else
-            setTimeout me.nextFile.bind(me), 1
+        me.fullScann(codes,'nocode')
+        #name = me.current_stat.ctime.getTime()
+        #fs.rename file, path.join(me.pathName, 'nocode', name+path.extname(file)), (err) ->
+        #  if err
+        #    console.trace err
+        #    me.emit 'error', err
+        #  else
+        #    setTimeout me.nextFile.bind(me), 1
       else
         if res.length == 0 or typeof res[0].box == 'undefined' or res[0].box.length==0
-          me.fullScann(codes)
+          me.fullScann(codes,'noaddress')
 
 
         else if res.length == 1
@@ -271,7 +272,7 @@ class Watcher extends EventEmitter
         me.checkFile()
 
 
-  fullScann: (codes) ->
+  fullScann: (codes,failpath) ->
     me = @
     file = path.join(me.pathName, me.files[me.fileIndex])
 
@@ -319,7 +320,7 @@ class Watcher extends EventEmitter
             debug 'put', boxes
             me.erp.put boxes[0]
       else
-        fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
+        fs.rename file, path.join(me.pathName, failpath, name+path.extname(file)), (err) ->
           if err
             console.trace err
             me.emit 'error', err
