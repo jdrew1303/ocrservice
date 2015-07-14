@@ -287,7 +287,8 @@ class Watcher extends EventEmitter
         rect: r
       recognizer.barcode()
       recognizer.getText item
-      data.codes = recognizer.barcodes
+      data =
+        codes: recognizer.barcodes
       data.txt = recognizer.texts
       data.zipCode = ""
       data.town = ""
@@ -307,17 +308,24 @@ class Watcher extends EventEmitter
       recognizer.sortboxAfterText()
 
     recognizer.once 'boxes', (boxes,codes) ->
-      console.log boxes,codes
-      name = boxes.codes.join('.')
-      fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
-        if err
-          console.trace err
-          me.emit 'error', err
-        else
-          debug 'put', boxes
-          me.erp.put boxes[0]
-
-    recognizer.open name, false
+      name = codes.join('.')
+      if boxes.length>0
+        boxes[0].codes = codes
+        fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
+          if err
+            console.trace err
+            me.emit 'error', err
+          else
+            debug 'put', boxes
+            me.erp.put boxes[0]
+      else
+        fs.rename file, path.join(me.pathName, 'noaddress', name+path.extname(file)), (err) ->
+          if err
+            console.trace err
+            me.emit 'error', err
+          else
+            setTimeout me.nextFile.bind(me), 1
+    recognizer.open file, false
   noAddress: (codes) ->
     #no address
     file = path.join(me.pathName, me.files[me.fileIndex])
