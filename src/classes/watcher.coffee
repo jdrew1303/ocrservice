@@ -310,7 +310,7 @@ class Watcher extends EventEmitter
 
     recognizer.once 'boxes', (boxes,codes) ->
       name = codes.join('.')
-      if boxes.length>0 and codes.length>0 and boxes[0].box.length>0
+      if boxes.length>0 and codes.length>0 and boxes[0].box?.length>0
         boxes[0].codes = codes
         console.log path.join(me.pathName, 'good', name+path.extname(file))
         fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
@@ -323,7 +323,7 @@ class Watcher extends EventEmitter
       else
         if failpath=='nocode'
           name = me.current_stat.ctime.getTime()
-        
+
         console.log path.join(me.pathName, failpath, name+path.extname(file))
         fs.rename file, path.join(me.pathName, failpath, name+path.extname(file)), (err) ->
           if err

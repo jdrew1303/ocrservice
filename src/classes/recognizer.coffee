@@ -64,7 +64,6 @@ class Recognizer extends EventEmitter
       @db.on 'error', (err) ->
         throw err
 
-
   setDebug: (mode)->
     @debug = mode
 
@@ -87,9 +86,6 @@ class Recognizer extends EventEmitter
             im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
             me.imageArea = im.width() * im.height()
             me.original = im.clone()
-
-
-
 
             me.barcode_image = im.clone()
             me.barcode_image.convertGrayscale()
@@ -178,6 +174,7 @@ class Recognizer extends EventEmitter
     xocr.SetMatrix cropped
     imagecodes = xocr.GetBarcode()
     (@appendBarcodes codes for codes in imagecodes)
+    xocr.free()
 
   contours: (im_canny,lowThresh,highThresh,nIters)->
 
@@ -228,6 +225,7 @@ class Recognizer extends EventEmitter
       xocr.SetMatrix @barcode_image
       imagecodes = xocr.GetBarcode()
       (@appendBarcodes codes for codes in imagecodes)
+      xocr.free()
     @barcodes.sort lengthRanking
     @barcodes
 
@@ -252,6 +250,7 @@ class Recognizer extends EventEmitter
     if @debug
       @show cropped
     txt = xocr.GetText()
+    xocr.free()
     @texts.push txt
 
 
