@@ -1,0 +1,126 @@
+{EventEmitter} = require 'events'
+path = require 'path'
+fs = require 'fs'
+variables = require '../variables'
+DB = require './db'
+Recognizer = require './recognizer'
+
+module.exports =
+class CWatcherClient extends EventEmitter
+  constructor: (cluster, pathName, filename)->
+    @cluster = cluster
+    @pathname = pathName
+    @filename = filename
+    me = @
+    @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
+    @db.setLimit 100
+    @db.on 'updated', (num) => @onDBUpdated(num)
+    @db.on 'error', (err) ->
+      me.emit 'error', err.code
+      me.emit 'stoped'
+    @scan()
+
+  scan: () ->
+    me=@
+    fs.stat path.join(me.pathname, me.filename), (err,stat) ->
+      if err
+        me.emit 'stoped'
+      else
+        me.current_stat = stat
+        now = new Date
+        now.setSeconds now.getSeconds() - 1
+        if stat.ctime < now
+          me.recognizer = new Recognizer me.db
+          me.recognizer.setDebug me.debug
+          me.recognizer.on 'error', (err) ->
+            file = path.join(me.pathname, me.filename)
+            fs.writeFile path.join(me.pathname, 'bad', path.filename+'.txt'), JSON.stringify(err,null,2) , (err) ->
+              if err
+                me.emit 'error', err
+              fs.rename file, path.join(me.pathname, 'bad', path.filename), (err) ->
+                if err
+                  me.emit 'error', err
+                me.emit 'stoped'
+          me.recognizer.on 'open', (res) ->
+            me.recognizer.barcode()
+            me.recognizer.sortbox()
+          me.recognizer.on 'boxes', (res,codes) ->
+            if codes.length == 0
+              me.fullScann codes, 'nocode'
+            else
+              if res.length == 0 or typeof res[0].box == 'undefined' or res[0].box.length==0
+                me.fullScann(codes,'noaddress')
+              else if res.length == 1
+                name = res[0].codes.join('.')
+                fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
+                  if err
+                    me.emit 'error', err
+                    me.emit 'stoped'
+                  else
+                    debug 'put', res
+                    #me.erp.put res[0]
+                    process.send res[0] # send results to master
+                    me.emit 'stoped'
+
+            #me.recognizeBoxes(res,codes)
+          me.recognizer.open path.join(me.pathname, me.filename)
+        else
+          debug 'CWatcherClient','file too young'
+          me.emit 'stoped'
+  fullScann: (codes,failpath) ->
+    me = @
+    file = path.join(me.pathname, me.filename)
+    debug 'fullscann', file,'failpath',failpath
+    @recognizer = new Recognizer
+    @recognizer.setDebug false
+    @recognizer.on 'error', (err) ->
+      #error 'CWatcherClient','noAddress'+codes.join(';')
+      me.emit 'stoped'
+    @recognizer.on 'open', (res) ->
+
+      me.recognizer.barcodeOriginal (codes) ->
+        r = me.recognizer.outerbounding()
+        item =
+          rect: r
+
+        me.recognizer.getText item
+        data =
+          codes: codes
+        data.txt = me.recognizer.texts
+        data.zipCode = ""
+        data.town = ""
+        data.street = ""
+        data.housenumber = ""
+        data.housenumberExtension = ""
+        if data.txt.length>0
+          adr = me.recognizer.getAddress data.txt[0], true
+          data.adr = adr
+          data.zipCode = adr.zipCode
+          data.town = adr.town
+          data.street = adr.street
+          data.housenumber = adr.housenumber
+          data.housenumberExtension = adr.housenumberExtension
+        #debug 'sortboxAfterText', data
+        me.recognizer.addresses.push data
+        me.recognizer.sortboxAfterText()
+
+    @recognizer.once 'boxes', (boxes,codes) ->
+      name = codes.join('.')
+      if boxes.length>0 and codes.length>0 and boxes[0].box?.length>0
+        boxes[0].codes = codes
+        fs.rename file, path.join(me.pathname, 'good', name+path.extname(file)), (err) ->
+          if err
+            me.emit 'error', err
+          else
+            #debug 'put', boxes
+            #me.erp.put boxes[0]
+            process.send boxes[0]
+          me.emit 'stoped'
+      else
+        if failpath=='nocode'
+          name = (new Date()).getTime()
+        fs.rename file, path.join(me.pathname, failpath, name+path.extname(file)), (err) ->
+          if err
+            me.emit 'error', err
+          me.emit 'stoped'
+    @recognizer.open file, false

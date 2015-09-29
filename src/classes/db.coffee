@@ -19,8 +19,16 @@ class DB extends EventEmitter
       user     : db_user
       database : db_name
       password : db_password
+      connectTimeout: 60000
+      acquireTimeout: 60000
+
     @limit = 10000
     @connection = mysql.createConnection options
+    @connection.on 'error', (err) ->
+      error 'DB', err
+      process.exit()
+    @connection.connect()
+    #console.log @connection
   stop: () ->
     @connection.end()
   setLimit: (number)->

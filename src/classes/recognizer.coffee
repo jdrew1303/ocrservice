@@ -4,6 +4,9 @@ cv = require 'opencv'
 {OCR} = require 'wocr'
 Extract = require './extract'
 DB = require '../classes/db'
+child_process = require 'child_process'
+spawn = child_process.spawn
+
 xocr = new OCR()
 xocr.Init variables.OCR_LANGUAGE
 
@@ -67,37 +70,53 @@ class Recognizer extends EventEmitter
   setDebug: (mode)->
     @debug = mode
 
+  free: () ->
+
+    @original = null
+    @barcode_image = null
+    @image = null
 
   open: (fileName,brightness)->
     debug 'open', fileName+' #'+brightness
+
     me = @
+    @brightness=false
     if typeof brightness == 'undefined'
-      brightness=true
+      @brightness=true
     @fileName = fileName
     if @fileName
-      cv.readImage @fileName, (err, im)->
-        if err
-          me.emit 'error', err
-        else
-          if im.width()==0
-            me.emit 'error', 'zero size'
-          else
-
-            im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
-            me.imageArea = im.width() * im.height()
-            me.original = im.clone()
-
-            me.barcode_image = im.clone()
-            me.barcode_image.convertGrayscale()
-
-            me.image = im.clone()
-            if brightness == true
-              me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
-            me.image.convertGrayscale()
-
-            me.emit 'open', true
+      cv.readImage @fileName, @imageReaded.bind(@)
     else
       me.emit 'error', new Error('there is no image')
+  imageReaded: (err,im) ->
+    me = @
+    if err
+      me.emit 'error', err
+    else
+      @im = im
+      @imageReadedNextTick()
+
+  imageReadedNextTick: () ->
+    me = @
+    im = @im
+    if im.width()==0
+      me.emit 'error', 'zero size'
+    else
+
+      im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
+      me.imageArea = im.width() * im.height()
+      me.original = im.clone()
+
+      me.barcode_image = im.clone()
+      me.barcode_image.convertGrayscale()
+      me.image = im.clone()
+
+      if @brightness == true
+        me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
+      me.image.convertGrayscale()
+
+      im=null
+      me.emit 'open', true
 
   removeDoubleRect: (sorts)->
     result=[]
@@ -207,6 +226,18 @@ class Recognizer extends EventEmitter
 
       i++
     sorts.sort contourRanking
+  barcodeOriginal: (cb)->
+    me = @
+    codes = []
+    child = spawn('zbarimg',[@fileName])
+    child.stdout.on 'data', (data) ->
+      codeparts = data.toString().replace(/\n/,'').split(':')
+      if codeparts.length==2
+        codes.push codeparts[1]
+    child.stderr.on 'data', (data) ->
+    child.on 'exit', (code) ->
+      me.barcodes = codes
+      cb codes
 
   barcode: (sep)->
     if typeof @barcode_image == 'undefined'
@@ -226,6 +257,7 @@ class Recognizer extends EventEmitter
       imagecodes = xocr.GetBarcode()
       (@appendBarcodes codes for codes in imagecodes)
       xocr.free()
+
     @barcodes.sort lengthRanking
     @barcodes
 
@@ -251,6 +283,7 @@ class Recognizer extends EventEmitter
       @show cropped
     txt = xocr.GetText()
     xocr.free()
+    cropped = null
     @texts.push txt
 
 

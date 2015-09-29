@@ -217,9 +217,9 @@ class Watcher extends EventEmitter
       if stat.ctime < now
         me.current_stat = stat
         me.debugMessage 'recognize'
-        recognizer = new Recognizer me.db
-        recognizer.setDebug me.debug
-        recognizer.on 'error', (err) ->
+        @recognizer = new Recognizer me.db
+        @recognizer.setDebug me.debug
+        @recognizer.on 'error', (err) ->
           file = path.join(me.pathName, me.files[me.fileIndex])
           fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(err,null,2) , (err) ->
             if err
@@ -229,11 +229,12 @@ class Watcher extends EventEmitter
               me.emit 'error', err
             else
               setTimeout me.nextFile.bind(me), 500
-        recognizer.on 'open', (res) ->
-          recognizer.barcode()
-          recognizer.sortbox()
-        recognizer.on 'boxes', me.recognizeBoxes.bind(me)
-        recognizer.open path.join(me.pathName, me.files[me.fileIndex])
+        @recognizer.on 'open', (res) ->
+          me.recognizer.barcode()
+          me.recognizer.sortbox()
+        @recognizer.on 'boxes', (res,codes) ->
+          me.recognizeBoxes(res,codes)
+        @recognizer.open path.join(me.pathName, me.files[me.fileIndex])
       else
         me.debugMessage 'file is too young'
         setTimeout me.nextFile.bind(me), 500
@@ -248,6 +249,11 @@ class Watcher extends EventEmitter
 
   nextFile: (error)->
     me = @
+    
+    if typeof me.recognizer=='object'
+      me.recognizer.free()
+    me.recognizer = null
+
     if not me.run
       false
     else
@@ -277,27 +283,27 @@ class Watcher extends EventEmitter
     file = path.join(me.pathName, me.files[me.fileIndex])
 
     debug 'fullscann', file,'failpath',failpath
-    recognizer = new Recognizer
-    recognizer.setDebug false
-    recognizer.on 'error', (err) ->
+    @recognizer = new Recognizer
+    @recognizer.setDebug false
+    @recognizer.on 'error', (err) ->
       me.noAddress(codes)
 
-    recognizer.on 'open', (res) ->
-      r = recognizer.outerbounding()
+    @recognizer.on 'open', (res) ->
+      r = me.recognizer.outerbounding()
       item =
         rect: r
-      recognizer.barcode()
-      recognizer.getText item
+      me.recognizer.barcode()
+      me.recognizer.getText item
       data =
-        codes: recognizer.barcodes
-      data.txt = recognizer.texts
+        codes: me.recognizer.barcodes
+      data.txt = me.recognizer.texts
       data.zipCode = ""
       data.town = ""
       data.street = ""
       data.housenumber = ""
       data.housenumberExtension = ""
       if data.txt.length>0
-        adr = recognizer.getAddress data.txt[0], true
+        adr = me.recognizer.getAddress data.txt[0], true
         data.adr = adr
         data.zipCode = adr.zipCode
         data.town = adr.town
@@ -305,10 +311,10 @@ class Watcher extends EventEmitter
         data.housenumber = adr.housenumber
         data.housenumberExtension = adr.housenumberExtension
       debug 'sortboxAfterText', data
-      recognizer.addresses.push data
-      recognizer.sortboxAfterText()
+      me.recognizer.addresses.push data
+      me.recognizer.sortboxAfterText()
 
-    recognizer.once 'boxes', (boxes,codes) ->
+    @recognizer.once 'boxes', (boxes,codes) ->
       name = codes.join('.')
       if boxes.length>0 and codes.length>0 and boxes[0].box?.length>0
         boxes[0].codes = codes
@@ -331,7 +337,7 @@ class Watcher extends EventEmitter
             me.emit 'error', err
           else
             setTimeout me.nextFile.bind(me), 1
-    recognizer.open file, false
+    @recognizer.open file, false
   noAddress: (codes) ->
     #no address
     file = path.join(me.pathName, me.files[me.fileIndex])
