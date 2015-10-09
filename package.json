@@ -4,9 +4,13 @@
   "homepage": "https://github.com/tualo/ocrservice",
   "main": "lib/main.js",
   "bin": {
-    "ocrservice": "./bin/ocrservice"
+    "ocrservice": "./bin/ocrservice",
+    "ocrservice-cwatch": "./bin/ocrservice-cwatch",
+    "ocrservice-watch": "./bin/ocrservice-watch",
+    "ocrservice-barcode": "./bin/ocrservice-barcode",
+    "ocrservice-variables": "./bin/ocrservice-variables"
   },
-  "version": "0.1.34",
+  "version": "0.1.41",
   "engines": {
     "node": ">=0.12.0"
   },

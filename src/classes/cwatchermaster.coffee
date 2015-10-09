@@ -11,7 +11,7 @@ udpfindme = require 'udpfindme'
 
 module.exports =
 class CWatcherMaster extends EventEmitter
-  constructor: (cluster, pathName)->
+  constructor: (cluster, pathName,cpus)->
     @intervalTimeout = 1000
     @debug = false
     @run = false
@@ -25,7 +25,13 @@ class CWatcherMaster extends EventEmitter
 
 
     @pathname = pathName
-    @cpuCount = require('os').cpus().length
+    if typeof cpus=='undefined'
+      @cpuCount = require('os').cpus().length
+      if @cpuCount>4
+        @cpuCount--
+        @cpuCount--
+    else
+      @cpuCount = cpus
 
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
     @db.setLimit 100

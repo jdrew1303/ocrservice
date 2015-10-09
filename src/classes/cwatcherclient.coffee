@@ -11,6 +11,12 @@ class CWatcherClient extends EventEmitter
     @cluster = cluster
     @pathname = pathName
     @filename = filename
+
+    @setBadPath = path.join(@pathname, 'bad')
+    @setGoodPath = path.join(@pathname, 'good')
+    @setNoAdressPath = path.join(@pathname, 'noaddress')
+    @setNoCodePath = path.join(@pathname, 'nocode')
+
     me = @
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
     @db.setLimit 100
@@ -20,9 +26,19 @@ class CWatcherClient extends EventEmitter
       me.emit 'stoped'
     @scan()
 
+  setNoCodePath: (path) ->
+    @nocodePath = path
+  setGoodPath: (path) ->
+    @goodPath = path
+  setNoAddressPath: (path) ->
+    @noaddressPath = path
+  setBadPath: (path) ->
+    @badPath = path
+
   scan: () ->
     me=@
-    fs.stat path.join(me.pathname, me.filename), (err,stat) ->
+    file = path.join(me.pathname, me.filename)
+    fs.stat file, (err,stat) ->
       if err
         me.emit 'stoped'
       else
@@ -33,11 +49,10 @@ class CWatcherClient extends EventEmitter
           me.recognizer = new Recognizer me.db
           me.recognizer.setDebug me.debug
           me.recognizer.on 'error', (err) ->
-            file = path.join(me.pathname, me.filename)
-            fs.writeFile path.join(me.pathname, 'bad', path.filename+'.txt'), JSON.stringify(err,null,2) , (err) ->
+            fs.writeFile path.join(me.badPath,me.filename+'.txt'), JSON.stringify(err,null,2) , (err) ->
               if err
                 me.emit 'error', err
-              fs.rename file, path.join(me.pathname, 'bad', path.filename), (err) ->
+              fs.rename file, path.join(me.badPath,me.filename), (err) ->
                 if err
                   me.emit 'error', err
                 me.emit 'stoped'
@@ -52,14 +67,26 @@ class CWatcherClient extends EventEmitter
                 me.fullScann(codes,'noaddress')
               else if res.length == 1
                 name = res[0].codes.join('.')
-                fs.rename file, path.join(me.pathName, 'good', name+path.extname(file)), (err) ->
+                fs.rename file, path.join(me.goodPath,name+path.extname(file)), (err) ->
                   if err
                     me.emit 'error', err
                     me.emit 'stoped'
                   else
                     debug 'put', res
                     #me.erp.put res[0]
-                    process.send res[0] # send results to master
+                    item =
+                      codes: codes
+                      ocr_street: ''
+                      ocr_zipCode: ''
+                      ocr_town: ''
+                      street: ''
+                      town: ''
+                      district: ''
+                      box:
+                        sortiergang: 'NA'
+                        sortierfach: 'NA'
+
+                    process.send item # send results to master
                     me.emit 'stoped'
 
             #me.recognizeBoxes(res,codes)
@@ -108,19 +135,22 @@ class CWatcherClient extends EventEmitter
       name = codes.join('.')
       if boxes.length>0 and codes.length>0 and boxes[0].box?.length>0
         boxes[0].codes = codes
-        fs.rename file, path.join(me.pathname, 'good', name+path.extname(file)), (err) ->
+        fs.rename file, path.join(me.goodPath,name+path.extname(file)), (err) ->
           if err
             me.emit 'error', err
           else
-            #debug 'put', boxes
-            #me.erp.put boxes[0]
             process.send boxes[0]
           me.emit 'stoped'
       else
         if failpath=='nocode'
           name = (new Date()).getTime()
-        fs.rename file, path.join(me.pathname, failpath, name+path.extname(file)), (err) ->
-          if err
-            me.emit 'error', err
-          me.emit 'stoped'
+          fs.rename file, path.join(me.nocodePath,name+path.extname(file)), (err) ->
+            if err
+              me.emit 'error', err
+            me.emit 'stoped'
+        else
+          fs.rename file, path.join(me.noaddressPath,name+path.extname(file)), (err) ->
+            if err
+              me.emit 'error', err
+            me.emit 'stoped'
     @recognizer.open file, false
