@@ -11,9 +11,12 @@ udpfindme = require 'udpfindme'
 
 module.exports =
 class CWatcherMaster extends EventEmitter
-  constructor: (cluster, pathName,cpus)->
+  constructor: (cluster, pathName,cpus,quick)->
     @intervalTimeout = 1000
     @debug = false
+    if typeof quick=='undefined'
+      quick=false
+    @quick = quick
     @run = false
     @files = []
     @cluster = cluster
@@ -62,8 +65,11 @@ class CWatcherMaster extends EventEmitter
   onERPLoginError: (msg) ->
     console.log msg
   onERPLoginSuccess: (msg) ->
-    @erp.fastaccess()
     debug 'cmaster','login success'
+    if @quick
+      @start() # start without updateing the db
+    else
+      @erp.fastaccess()
   onERPPut: (msg) ->
     process.nextTick @dispatchTask.bind(@)
 

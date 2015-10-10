@@ -42,8 +42,8 @@ lengthRanking = (a,b) ->
 module.exports =
 class Recognizer extends EventEmitter
 
-  constructor: (db)->
-
+  constructor: (db, process_list)->
+    @showCounter=0
     @imageArea = 0
     @rectDebugIndex = 0
     @debug = false
@@ -67,6 +67,33 @@ class Recognizer extends EventEmitter
       @db.on 'error', (err) ->
         throw err
 
+    if typeof process_list=='undefined'
+      @process_list = []
+      proc =
+        method: 'getText_M2'
+        OCR_CROPPED_TEXT_THRESHOLD_MIN: 10
+        OCR_CROPPED_TEXT_THRESHOLD_MAX: 50
+        OCR_TEXT_MIN_NORMALIZE: variables.OCR_TEXT_MIN_NORMALIZE
+        OCR_TEXT_MAX_NORMALIZE: 255
+        OCR_TEXT_CANNY_THRESH_LOW: variables.OCR_TEXT_CANNY_THRESH_LOW
+        OCR_TEXT_CANNY_THRESH_HIGH: variables.OCR_TEXT_CANNY_THRESH_HIGH
+        OCR_TEXT_NITERS: variables.OCR_TEXT_NITERS
+      @process_list.push proc
+
+      proc =
+        method: 'getText_M2'
+        OCR_CROPPED_TEXT_THRESHOLD_MIN: 60
+        OCR_CROPPED_TEXT_THRESHOLD_MAX: 90
+        OCR_TEXT_MIN_NORMALIZE: variables.OCR_TEXT_MIN_NORMALIZE
+        OCR_TEXT_MAX_NORMALIZE: 255
+        OCR_TEXT_CANNY_THRESH_LOW: variables.OCR_TEXT_CANNY_THRESH_LOW
+        OCR_TEXT_CANNY_THRESH_HIGH: variables.OCR_TEXT_CANNY_THRESH_HIGH
+        OCR_TEXT_NITERS: variables.OCR_TEXT_NITERS
+      @process_list.push proc
+    else
+      @process_list = process_list
+
+
   setDebug: (mode)->
     @debug = mode
 
@@ -88,6 +115,9 @@ class Recognizer extends EventEmitter
       cv.readImage @fileName, @imageReaded.bind(@)
     else
       me.emit 'error', new Error('there is no image')
+  test: () ->
+    @processList()
+
   imageReaded: (err,im) ->
     me = @
     if err
@@ -102,7 +132,7 @@ class Recognizer extends EventEmitter
     if im.width()==0
       me.emit 'error', 'zero size'
     else
-
+      im.shearing 1,0,0,  0.06,1,0
       im.resize im.width()* parseFloat(variables.OCR_IMAGE_WIDTH_SCALE),im.height()* parseFloat(variables.OCR_IMAGE_HEIGHT_SCALE)
       me.imageArea = im.width() * im.height()
       me.original = im.clone()
@@ -112,6 +142,7 @@ class Recognizer extends EventEmitter
       me.image = im.clone()
 
       if @brightness == true
+        debug 'brightness', ''
         me.image.brightness  parseFloat(variables.OCR_IMAGE_CONTRAST), parseInt(variables.OCR_IMAGE_BIGHTNESS)
       me.image.convertGrayscale()
 
@@ -137,9 +168,10 @@ class Recognizer extends EventEmitter
     @contourImage.rectangle([rect.x,rect.y],[rect.width,rect.height],color,15)
     @rectDebugIndex++
 
+
   show: (im)->
     if parseInt(variables.OCR_DEBUG_WINDOW)==1
-      win = new cv.NamedWindow "Debug", 0
+      win = new cv.NamedWindow "Debug"+(@showCounter++), 0
       showImage = im.clone()
       scale = 2
 
@@ -190,7 +222,13 @@ class Recognizer extends EventEmitter
   getBarcode: (item)->
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
+    #cropped = cropped.threshold 40,90
+    #cropped.equalizeHist()
+
+
     xocr.SetMatrix cropped
+    if @debug
+      @show cropped
     imagecodes = xocr.GetBarcode()
     (@appendBarcodes codes for codes in imagecodes)
     xocr.free()
@@ -229,12 +267,14 @@ class Recognizer extends EventEmitter
   barcodeOriginal: (cb)->
     me = @
     codes = []
+    console.log @fileName
     child = spawn('zbarimg',[@fileName])
     child.stdout.on 'data', (data) ->
       codeparts = data.toString().replace(/\n/,'').split(':')
       if codeparts.length==2
         codes.push codeparts[1]
     child.stderr.on 'data', (data) ->
+      console.log data.toString()
     child.on 'exit', (code) ->
       me.barcodes = codes
       cb codes
@@ -247,14 +287,15 @@ class Recognizer extends EventEmitter
     @contourImage = @original.clone()
     sorts = @contours im_canny, parseInt(variables.OCR_BC_CANNY_THRESH_LOW), parseInt(variables.OCR_BC_CANNY_THRESH_HIGH), parseInt( variables.OCR_BC_NITERS )
     sorts = @removeDoubleRect sorts
-    if @debug
-      (@drawRect item for item in sorts)
-      @show(@contourImage)
+    #if @debug
+    #  (@drawRect item for item in sorts)
+    #  @show(@contourImage)
     (@getBarcode item for item in sorts)
 
     if @barcodes.length==0
       xocr.SetMatrix @barcode_image
       imagecodes = xocr.GetBarcode()
+      console.log 'imagecodes',imagecodes
       (@appendBarcodes codes for codes in imagecodes)
       xocr.free()
 
@@ -267,12 +308,29 @@ class Recognizer extends EventEmitter
       @addresses.push adr
     adr
 
-  getText: (item)->
+  getText_M1: (item,config)->
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
+    cropped.normalize parseInt(config.OCR_CROPPED_TEXT_MIN_NORMALIZE),parseInt(config.OCR_CROPPED_TEXT_MAX_NORMALIZE)
+    cropped.brightness  parseFloat(config.OCR_CROPPED_TEXT_CONTRAST), parseInt(config.OCR_CROPPED_TEXT_BIGHTNESS)
+    if @debug
+      @show cropped
 
-    cropped.normalize parseInt(variables.OCR_CROPPED_TEXT_MIN_NORMALIZE),parseInt(variables.OCR_CROPPED_TEXT_MAX_NORMALIZE)
-    cropped.brightness  parseFloat(variables.OCR_CROPPED_TEXT_CONTRAST), parseInt(variables.OCR_CROPPED_TEXT_BIGHTNESS)
+    xocr.SetMatrix cropped
+    if @debug
+      @show cropped
+    txt = xocr.GetText()
+    xocr.free()
+
+    cropped = null
+    @texts.push txt
+
+
+  getText: (item,config)->
+    r = item.rect
+    cropped = @image.crop r.x,r.y,r.width,r.height
+    cropped = cropped.threshold parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MIN), parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MAX)
+    cropped.equalizeHist()
 
     if @debug
       @show cropped
@@ -286,6 +344,47 @@ class Recognizer extends EventEmitter
     cropped = null
     @texts.push txt
 
+  getText_M2: (item,config)->
+    r = item.rect
+    cropped = @image.crop r.x,r.y,r.width,r.height
+    cropped = cropped.threshold parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MIN), parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MAX)
+    cropped.equalizeHist()
+    if cropped.meanStdDev().mean.pixel(0,0)<cropped.meanStdDev().stddev.pixel(0,0)
+      info 'getText_M2','skipped mean lower than stddev'
+      return
+    if @debug
+      @show cropped
+
+
+    xocr.SetMatrix cropped
+    if @debug
+      @show cropped
+    txt = xocr.GetText()
+    xocr.free()
+    cropped.rotate -90
+
+    xocr.SetMatrix cropped
+    if @debug
+      @show cropped
+    txt = xocr.GetText()
+    xocr.free()
+    cropped.rotate -90
+
+    xocr.SetMatrix cropped
+    if @debug
+      @show cropped
+    txt = xocr.GetText()
+    xocr.free()
+    cropped.rotate -90
+
+    xocr.SetMatrix cropped
+    if @debug
+      @show cropped
+    txt = xocr.GetText()
+    xocr.free()
+
+    cropped = null
+    @texts.push txt
 
   text: ()->
     if typeof @image == 'undefined'
@@ -299,9 +398,56 @@ class Recognizer extends EventEmitter
     if @debug
       (@drawRect item for item in sorts)
       @show(@contourImage)
-    (@getText(item) for item in sorts)
+    if parseInt(variables.OCR_TEXT_METHOD)==0
+      (@getText_M1(item,variables) for item in sorts)
+    if parseInt(variables.OCR_TEXT_METHOD)==1
+      (@getText(item,variables) for item in sorts)
+    if parseInt(variables.OCR_TEXT_METHOD)==2
+      (@getText_M2(item,variables) for item in sorts)
     (@getAddress item for item in @texts)
     @addresses
+
+  textMethod: (methodConfig)->
+    if typeof @image == 'undefined'
+      @emit 'error', new Error('the image is not loaded')
+    im_canny = @image.copy()
+
+    im_canny.normalize parseInt(methodConfig.OCR_TEXT_MIN_NORMALIZE),parseInt(methodConfig.OCR_TEXT_MAX_NORMALIZE)
+    @contourImage = @original.clone()
+    sorts = @contours im_canny, parseInt(methodConfig.OCR_TEXT_CANNY_THRESH_LOW), parseInt(methodConfig.OCR_TEXT_CANNY_THRESH_HIGH),parseInt( methodConfig.OCR_TEXT_NITERS )
+    sorts = @removeDoubleRect sorts
+    if @debug
+      (@drawRect item for item in sorts)
+      @show(@contourImage)
+    (@[methodConfig.method](item,methodConfig) for item in sorts)
+    (@getAddress item for item in @texts)
+    @addresses
+
+  processList: (index) ->
+    if typeof index=='undefined'
+      index=-1
+    if index==-1
+      @barcode()
+
+      if @barcodes.length==0
+        fn=(codes)->
+          @barcodes = codes
+          @processList index+1
+        @barcodeOriginal fn.bind(@)
+      else
+        @processList index+1
+    else if index > @process_list.length
+      @emit 'boxes', [], @barcodes
+    else
+      @textMethod @process_list[index]
+      @once 'internalboxes', (res,codes) ->
+        if typeof res!='undefined' and res.length > 0 and res[0].box.length == 1
+          @emit 'boxes',res,codes
+        else
+          @processList index+1
+      @sortboxAfterText()
+
+
 
   reduceResult: ()->
     me = @
@@ -335,8 +481,7 @@ class Recognizer extends EventEmitter
     me = @
     me.findSortboxCounter--
     if me.findSortboxCounter == 0
-
-      me.emit 'boxes', me.fixResult(me.reduceResult(),me.barcodes) ,me.barcodes
+      me.emit 'internalboxes', me.fixResult(me.reduceResult(),me.barcodes) ,me.barcodes
 
   findSortbox: (item)->
     me = @
@@ -353,8 +498,9 @@ class Recognizer extends EventEmitter
     @db.findText searchtext
 
   sortbox: ()->
-    @text()
-    @sortboxAfterText()
+    #@text()
+    #@sortboxAfterText()
+    @processList()
 
   sortboxAfterText: ()->
     @findSortboxCounter = @addresses.length+1

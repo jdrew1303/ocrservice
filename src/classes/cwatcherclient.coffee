@@ -12,10 +12,10 @@ class CWatcherClient extends EventEmitter
     @pathname = pathName
     @filename = filename
 
-    @setBadPath = path.join(@pathname, 'bad')
-    @setGoodPath = path.join(@pathname, 'good')
-    @setNoAdressPath = path.join(@pathname, 'noaddress')
-    @setNoCodePath = path.join(@pathname, 'nocode')
+    @setBadPath path.join(@pathname, 'bad')
+    @setGoodPath path.join(@pathname, 'good')
+    @setNoAddressPath path.join(@pathname, 'noaddress')
+    @setNoCodePath path.join(@pathname, 'nocode')
 
     me = @
     @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
@@ -67,26 +67,18 @@ class CWatcherClient extends EventEmitter
                 me.fullScann(codes,'noaddress')
               else if res.length == 1
                 name = res[0].codes.join('.')
+                try
+                  fs.unlinkSync path.join(me.goodPath,name+path.extname(file))
+                catch e
+
                 fs.rename file, path.join(me.goodPath,name+path.extname(file)), (err) ->
+                  debug 'good move',file+'->'+path.join(me.noaddressPath,name+path.extname(file))
                   if err
                     me.emit 'error', err
                     me.emit 'stoped'
                   else
                     debug 'put', res
-                    #me.erp.put res[0]
-                    item =
-                      codes: codes
-                      ocr_street: ''
-                      ocr_zipCode: ''
-                      ocr_town: ''
-                      street: ''
-                      town: ''
-                      district: ''
-                      box:
-                        sortiergang: 'NA'
-                        sortierfach: 'NA'
-
-                    process.send item # send results to master
+                    process.send res[0] # sending good data
                     me.emit 'stoped'
 
             #me.recognizeBoxes(res,codes)
@@ -135,22 +127,71 @@ class CWatcherClient extends EventEmitter
       name = codes.join('.')
       if boxes.length>0 and codes.length>0 and boxes[0].box?.length>0
         boxes[0].codes = codes
+        try
+          fs.unlinkSync path.join(me.goodPath,name+path.extname(file))
+        catch e
+
         fs.rename file, path.join(me.goodPath,name+path.extname(file)), (err) ->
+          debug 'good* move',file+'->'+path.join(me.noaddressPath,name+path.extname(file))
           if err
             me.emit 'error', err
           else
-            process.send boxes[0]
+            process.send boxes[0] # sending good fullscann result
           me.emit 'stoped'
       else
         if failpath=='nocode'
           name = (new Date()).getTime()
+          try
+            fs.unlinkSync path.join(me.nocodePath,name+path.extname(file))
+          catch e
+
           fs.rename file, path.join(me.nocodePath,name+path.extname(file)), (err) ->
+            debug failpath+' move',file+'->'+path.join(me.noaddressPath,name+path.extname(file))
             if err
               me.emit 'error', err
             me.emit 'stoped'
         else
+          try
+            fs.unlinkSync path.join(me.noaddressPath,name+path.extname(file))
+          catch e
+
           fs.rename file, path.join(me.noaddressPath,name+path.extname(file)), (err) ->
+            debug failpath+' move',file+'->'+path.join(me.noaddressPath,name+path.extname(file))
             if err
               me.emit 'error', err
+            else
+              box =
+                sortiergang: 'NA'
+                sortierfach: 'NA'
+                strid: -1
+                mandant: null
+                regiogruppe: null
+                bereich: 'NA',
+                plz: ''
+                ort: ''
+                ortsteil: ''
+                hnvon: ''
+                hnbis: ''
+                gerade: ''
+                ungerade: ''
+                strasse: ''
+              item =
+                name: ""
+                street: ""
+                housenumber: ""
+                housenumberExtension: ""
+                flatNumber: ""
+                zipCode: ""
+                town: ""
+                state: true,
+                message: ""
+                box: [box]
+                codes: codes
+                ocr_street: ''
+                ocr_zipCode: ''
+                ocr_town: ''
+                district: ''
+              process.send item
+              console.log 'noaddress',boxes
             me.emit 'stoped'
     @recognizer.open file, false

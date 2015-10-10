@@ -15,6 +15,7 @@ class CWatchCommand extends Command
     {parameter: "--nocode [nocode]", description: "path for no code"}
     {parameter: "--good [good]", description: "path for good"}
     {parameter: "--bad [bad]", description: "path for bad"}
+    {parameter: "--quick", description: "quickstart no db update"}
     {parameter: "-c,--cpus [cpus]", description: "how much cpus used for"}
     {parameter: "-d,--debug", description: "enable debug mode"}
   ]
@@ -28,8 +29,7 @@ class CWatchCommand extends Command
     #@files = []
     #@cpuCount = require('os').cpus().length
     if cluster.isMaster
-
-      cmaster = new CWatcherMaster cluster, options.pathname,options.cpus
+      cmaster = new CWatcherMaster cluster, options.pathname,program.cpus,program.quick
     else
       exitfn = ()->
         process.exit()
