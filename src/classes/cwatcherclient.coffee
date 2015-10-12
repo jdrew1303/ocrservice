@@ -7,10 +7,11 @@ Recognizer = require './recognizer'
 
 module.exports =
 class CWatcherClient extends EventEmitter
-  constructor: (cluster, pathName, filename)->
+  constructor: (cluster, pathName, filename, processlist)->
     @cluster = cluster
     @pathname = pathName
     @filename = filename
+    @processlist = processlist
 
     @setBadPath path.join(@pathname, 'bad')
     @setGoodPath path.join(@pathname, 'good')
@@ -46,7 +47,7 @@ class CWatcherClient extends EventEmitter
         now = new Date
         now.setSeconds now.getSeconds() - 1
         if stat.ctime < now
-          me.recognizer = new Recognizer me.db
+          me.recognizer = new Recognizer me.db, me.processlist
           me.recognizer.setDebug me.debug
           me.recognizer.on 'error', (err) ->
             fs.writeFile path.join(me.badPath,me.filename+'.txt'), JSON.stringify(err,null,2) , (err) ->

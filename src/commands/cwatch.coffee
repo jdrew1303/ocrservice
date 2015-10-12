@@ -11,6 +11,7 @@ class CWatchCommand extends Command
   @commandName: 'cwatch'
   @commandArgs: ['pathname']
   @options: [
+    {parameter: "-l,--processlist [processlist]", description: "json process instruction list"},
     {parameter: "--noaddress [noaddress]", description: "path for no address"}
     {parameter: "--nocode [nocode]", description: "path for no code"}
     {parameter: "--good [good]", description: "path for good"}
@@ -36,8 +37,13 @@ class CWatchCommand extends Command
       setTimeout exitfn, 60000
 
       process.on 'message', (msg) ->
+
+        try
+          processlist = require(program.processlist)
+        catch e
+
         console.log 'worker', msg, options.pathname
-        cclient = new CWatcherClient cluster, options.pathname, msg
+        cclient = new CWatcherClient cluster, options.pathname, msg, processlist
         if options.noaddress
           cclient.setNoAddressPath options.noaddress
 
