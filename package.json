@@ -7,6 +7,7 @@
     "ocrservice": "./bin/ocrservice",
     "ocrservice-cwatch": "./bin/ocrservice-cwatch",
     "ocrservice-watch": "./bin/ocrservice-watch",
+    "ocrservice-test": "./bin/ocrservice-test",
     "ocrservice-barcode": "./bin/ocrservice-barcode",
     "ocrservice-variables": "./bin/ocrservice-variables"
   },

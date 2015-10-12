@@ -116,6 +116,11 @@ class Recognizer extends EventEmitter
     else
       me.emit 'error', new Error('there is no image')
   test: () ->
+    
+    im= @original.clone()
+    dest = im.meanShiftFiltering()
+    @show @original
+    @show dest
     @processList()
 
   imageReaded: (err,im) ->
