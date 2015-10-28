@@ -43,6 +43,7 @@ class CWatchCommand extends Command
         catch e
 
         console.log 'worker', msg, options.pathname
+        console.log 'worker', processlist
         cclient = new CWatcherClient cluster, options.pathname, msg, processlist
         if options.noaddress
           cclient.setNoAddressPath options.noaddress

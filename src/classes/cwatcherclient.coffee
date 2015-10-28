@@ -12,6 +12,8 @@ class CWatcherClient extends EventEmitter
     @pathname = pathName
     @filename = filename
     @processlist = processlist
+    if typeof @processlist=='undefined'
+      console.log 'CWatcherClient','there was no processlist given !'
 
     @setBadPath path.join(@pathname, 'bad')
     @setGoodPath path.join(@pathname, 'good')
@@ -91,7 +93,7 @@ class CWatcherClient extends EventEmitter
     me = @
     file = path.join(me.pathname, me.filename)
     debug 'fullscann', file,'failpath',failpath
-    @recognizer = new Recognizer
+    @recognizer = new Recognizer me.db, me.processlist
     @recognizer.setDebug false
     @recognizer.on 'error', (err) ->
       #error 'CWatcherClient','noAddress'+codes.join(';')

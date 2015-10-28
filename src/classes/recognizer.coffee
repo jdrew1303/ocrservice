@@ -68,6 +68,10 @@ class Recognizer extends EventEmitter
         throw err
 
     if typeof process_list=='undefined'
+      console.log 'CWatcherClient','there was no processlist given !'
+
+
+    if typeof process_list=='undefined'
       @process_list = []
       proc =
         method: 'getText_M2'
@@ -311,6 +315,8 @@ class Recognizer extends EventEmitter
     adr
 
   getText_M1: (item,config)->
+    if typeof config=='undefined'
+      config=@process_list[0]
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
     cropped.normalize parseInt(config.OCR_CROPPED_TEXT_MIN_NORMALIZE),parseInt(config.OCR_CROPPED_TEXT_MAX_NORMALIZE)
@@ -329,6 +335,8 @@ class Recognizer extends EventEmitter
 
 
   getText: (item,config)->
+    if typeof config=='undefined'
+      config=@process_list[0]
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
     cropped = cropped.threshold parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MIN), parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MAX)
@@ -347,6 +355,8 @@ class Recognizer extends EventEmitter
     @texts.push txt
 
   getText_M2: (item,config)->
+    if typeof config=='undefined'
+      config=@process_list[0]
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
 
@@ -435,7 +445,7 @@ class Recognizer extends EventEmitter
     if typeof methodConfig.OCR_TEXT_MIN_NORMALIZE=='number'
       if typeof methodConfig.OCR_TEXT_MAX_NORMALIZE=='number'
         im_canny.normalize parseInt(methodConfig.OCR_TEXT_MIN_NORMALIZE),parseInt(methodConfig.OCR_TEXT_MAX_NORMALIZE)
-        
+
     @contourImage = @original.clone()
     sorts = @contours im_canny, parseInt(methodConfig.OCR_TEXT_CANNY_THRESH_LOW), parseInt(methodConfig.OCR_TEXT_CANNY_THRESH_HIGH),parseInt( methodConfig.OCR_TEXT_NITERS )
     sorts = @removeDoubleRect sorts
