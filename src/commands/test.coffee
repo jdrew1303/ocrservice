@@ -20,9 +20,12 @@ class Sortbox extends Command
     db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
 
     try
+      console.log program.processlist
       processlist = require(program.processlist)
     catch e
 
+    console.log processlist
+    console.time "elapsed"
     recognizer = new Recognizer db, processlist
     recognizer.setDebug program.debug||false
     recognizer.on 'error', (err) ->
@@ -31,6 +34,7 @@ class Sortbox extends Command
       recognizer.test()
     recognizer.on 'boxes', (res,codes) ->
       console.log JSON.stringify(res,null,1)
+      console.timeEnd "elapsed"
       db.connection.end()
 
     recognizer.open options.filename, true

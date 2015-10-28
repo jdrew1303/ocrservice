@@ -116,11 +116,8 @@ class Recognizer extends EventEmitter
     else
       me.emit 'error', new Error('there is no image')
   test: () ->
-    
+
     im= @original.clone()
-    dest = im.meanShiftFiltering()
-    @show @original
-    @show dest
     @processList()
 
   imageReaded: (err,im) ->
@@ -352,41 +349,59 @@ class Recognizer extends EventEmitter
   getText_M2: (item,config)->
     r = item.rect
     cropped = @image.crop r.x,r.y,r.width,r.height
+
+    #win = new cv.NamedWindow "CroppedDebug", 0
+    #showImage = cropped.clone()
+    #scale = 2
+    #win.show showImage
+    #win.blockingWaitKey 1000
+
     cropped = cropped.threshold parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MIN), parseInt(config.OCR_CROPPED_TEXT_THRESHOLD_MAX)
     cropped.equalizeHist()
-    if cropped.meanStdDev().mean.pixel(0,0)<cropped.meanStdDev().stddev.pixel(0,0)
-      info 'getText_M2','skipped mean lower than stddev'
+    mean = cropped.meanStdDev().mean.pixel(0,0)
+    stddev = cropped.meanStdDev().stddev.pixel(0,0)
+
+
+    if stddev < 200 and mean < stddev
+      info 'getText_M2','skipped stddev lower than 200'
+      return
+
+    if mean==0 and stddev==0
+      info 'getText_M2','skipped mean and stddev = 0'
       return
     if @debug
       @show cropped
 
 
-    xocr.SetMatrix cropped
-    if @debug
-      @show cropped
-    txt = xocr.GetText()
-    xocr.free()
-    cropped.rotate -90
+    cropped.rotate config.OCR_CROPPED_ROTATION || 0
 
     xocr.SetMatrix cropped
     if @debug
       @show cropped
     txt = xocr.GetText()
     xocr.free()
-    cropped.rotate -90
+    if false
+      cropped.rotate -90
 
-    xocr.SetMatrix cropped
-    if @debug
-      @show cropped
-    txt = xocr.GetText()
-    xocr.free()
-    cropped.rotate -90
+      xocr.SetMatrix cropped
+      if @debug
+        @show cropped
+      txt = xocr.GetText()
+      xocr.free()
+      cropped.rotate -90
 
-    xocr.SetMatrix cropped
-    if @debug
-      @show cropped
-    txt = xocr.GetText()
-    xocr.free()
+      xocr.SetMatrix cropped
+      if @debug
+        @show cropped
+      txt = xocr.GetText()
+      xocr.free()
+      cropped.rotate -90
+
+      xocr.SetMatrix cropped
+      if @debug
+        @show cropped
+      txt = xocr.GetText()
+      xocr.free()
 
     cropped = null
     @texts.push txt
@@ -417,13 +432,17 @@ class Recognizer extends EventEmitter
       @emit 'error', new Error('the image is not loaded')
     im_canny = @image.copy()
 
-    im_canny.normalize parseInt(methodConfig.OCR_TEXT_MIN_NORMALIZE),parseInt(methodConfig.OCR_TEXT_MAX_NORMALIZE)
+    if typeof methodConfig.OCR_TEXT_MIN_NORMALIZE=='number'
+      if typeof methodConfig.OCR_TEXT_MAX_NORMALIZE=='number'
+        im_canny.normalize parseInt(methodConfig.OCR_TEXT_MIN_NORMALIZE),parseInt(methodConfig.OCR_TEXT_MAX_NORMALIZE)
+        
     @contourImage = @original.clone()
     sorts = @contours im_canny, parseInt(methodConfig.OCR_TEXT_CANNY_THRESH_LOW), parseInt(methodConfig.OCR_TEXT_CANNY_THRESH_HIGH),parseInt( methodConfig.OCR_TEXT_NITERS )
     sorts = @removeDoubleRect sorts
     if @debug
       (@drawRect item for item in sorts)
       @show(@contourImage)
+
     (@[methodConfig.method](item,methodConfig) for item in sorts)
     (@getAddress item for item in @texts)
     @addresses
@@ -441,9 +460,10 @@ class Recognizer extends EventEmitter
         @barcodeOriginal fn.bind(@)
       else
         @processList index+1
-    else if index > @process_list.length
+    else if index >= @process_list.length
       @emit 'boxes', [], @barcodes
     else
+      console.log 'processList', index ,@process_list.length , @process_list[index]
       @textMethod @process_list[index]
       @once 'internalboxes', (res,codes) ->
         if typeof res!='undefined' and res.length > 0 and res[0].box.length == 1
