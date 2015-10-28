@@ -12,8 +12,9 @@ class CWatcherClient extends EventEmitter
     @pathname = pathName
     @filename = filename
     @processlist = processlist
+    console.log(@pathname,@filename)
     if typeof @processlist=='undefined'
-      console.log 'CWatcherClient','there was no processlist given !'
+      console.log 'CWatcherClient','there was no processlist given!'
 
     @setBadPath path.join(@pathname, 'bad')
     @setGoodPath path.join(@pathname, 'good')
