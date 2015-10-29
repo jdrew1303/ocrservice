@@ -74,7 +74,7 @@ class CWatchCommand extends Command
             goodPath = options.good
 
           if options.nocode
-            nocode = options.nocode
+            noCodePath = options.nocode
 
           if options.bad
             bad = options.bad
@@ -123,7 +123,7 @@ class CWatchCommand extends Command
           else if codes.length==0
             name = (new Date()).getTime()
             #save no code
-            fs.rename filename, path.join(code,name+path.extname(filename)), (err)->
+            fs.rename filename, path.join(noCodePath,name+path.extname(filename)), (err)->
               process.exit()
           db.connection.end()
 

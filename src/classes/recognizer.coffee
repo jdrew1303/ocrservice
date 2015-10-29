@@ -372,9 +372,9 @@ class Recognizer extends EventEmitter
     stddev = cropped.meanStdDev().stddev.pixel(0,0)
 
 
-    if stddev < 200 and mean < stddev
-      info 'getText_M2','skipped stddev lower than 200'
-      return
+    #if stddev < 200 and mean < stddev
+    #  info 'getText_M2','skipped stddev lower than 200'
+    #  return
 
     if mean==0 and stddev==0
       info 'getText_M2','skipped mean and stddev = 0'
@@ -476,7 +476,7 @@ class Recognizer extends EventEmitter
       console.log 'processList', index ,@process_list.length , @process_list[index]
       @textMethod @process_list[index]
       @once 'internalboxes', (res,codes) ->
-        if typeof res!='undefined' and res.length > 0 and res[0].box.length == 1
+        if typeof res!='undefined' and res.length > 0 and typeof res[0].box!='undefined' and res[0].box.length == 1
           @emit 'boxes',res,codes
         else
           @processList index+1
