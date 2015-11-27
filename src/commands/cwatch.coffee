@@ -9,6 +9,18 @@ DB = require '../classes/db'
 Recognizer = require '../classes/recognizer'
 
 #CWatcherClient = require '../classes/cwatcherclient'
+moveFile = (orig,dest,cb) ->
+  if fs.existsSync orig
+
+    source = fs.createReadStream orig
+    dest = fs.createWriteStream dest
+    source.pipe dest
+    source.on 'end',  ()->
+      fs.unlinkSync orig
+      cb null
+    source.on 'error', cb
+  else
+    cb(null)
 
 module.exports =
 class CWatchCommand extends Command
@@ -49,38 +61,48 @@ class CWatchCommand extends Command
         catch e
         console.log msg
         console.time "elapsed"
+
         filename = path.join(options.pathname,msg)
+
+        if not fs.existsSync(filename)
+          process.exit()
+
         pathname = options.pathname
         recognizer = new Recognizer db, processlist
         recognizer.setDebug program.debug||false
         recognizer.on 'error', (err) ->
           throw err
         recognizer.on 'open', (res) ->
-          recognizer.test()
+          recognizer.run()
         recognizer.on 'boxes', (res,codes) ->
-          console.log JSON.stringify(res,null,1),codes
+          #console.log JSON.stringify(res,null,1),codes
           console.timeEnd "elapsed"
           name = codes.join('.')
+
+
 
           bad = path.join(pathname, 'good')
           goodPath = path.join(pathname, 'good')
           noAddressPath = path.join(pathname, 'noaddress')
           noCodePath = path.join(pathname, 'nocode')
 
-          if options.noaddress
-            noAddressPath = options.noaddress
+          if program.noaddress
+            noAddressPath = program.noaddress
 
-          if options.good
-            goodPath = options.good
+          if program.good
+            goodPath = program.good
 
-          if options.nocode
-            noCodePath = options.nocode
+          if program.nocode
+            noCodePath = program.nocode
 
-          if options.bad
-            bad = options.bad
+          if program.bad
+            bad = program.bad
+
+
 
           if res.length>0 and codes.length>0 and res[0].box?.length>0
-            fs.rename filename, path.join(goodPath,name+path.extname(filename)), (err)->
+            debug 'cwatch', 'good '+filename
+            moveFile filename, path.join(goodPath,name+path.extname(filename)), (err)->
               process.exit()
             #send good
             process.send res[0]
@@ -89,8 +111,8 @@ class CWatchCommand extends Command
               sortiergang: 'NA'
               sortierfach: 'NA'
               strid: -1
-              mandant: null
-              regiogruppe: null
+              mandant: '6575'
+              regiogruppe: 'Standardbriefsendungen'
               bereich: 'NA',
               plz: ''
               ort: ''
@@ -117,13 +139,15 @@ class CWatchCommand extends Command
               ocr_town: ''
               district: ''
             #send no address
+            debug 'cwatch', 'noaddress '+filename
             process.send item
-            fs.rename filename, path.join(noAddressPath,name+path.extname(filename)), (err)->
+            moveFile filename, path.join(noAddressPath,name+path.extname(filename)), (err)->
               process.exit()
           else if codes.length==0
             name = (new Date()).getTime()
             #save no code
-            fs.rename filename, path.join(noCodePath,name+path.extname(filename)), (err)->
+            debug 'cwatch', 'nocode '+filename
+            moveFile filename, path.join(noCodePath,name+path.extname(filename)), (err)->
               process.exit()
           db.connection.end()
 

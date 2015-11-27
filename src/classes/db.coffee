@@ -19,8 +19,8 @@ class DB extends EventEmitter
       user     : db_user
       database : db_name
       password : db_password
-      connectTimeout: 60000
-      acquireTimeout: 60000
+      connectTimeout: 120000
+      acquireTimeout: 120000
 
     @limit = 10000
     @connection = mysql.createConnection options
@@ -28,6 +28,8 @@ class DB extends EventEmitter
       error 'DB', err
       process.exit()
     @connection.connect()
+    @connection.query 'set wait_timeout=28800', [], (err,rows) ->
+      console.log err
     #console.log @connection
   stop: () ->
     @connection.end()

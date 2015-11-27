@@ -119,8 +119,7 @@ class Recognizer extends EventEmitter
       cv.readImage @fileName, @imageReaded.bind(@)
     else
       me.emit 'error', new Error('there is no image')
-  test: () ->
-
+  run: () ->
     im= @original.clone()
     @processList()
 
@@ -219,25 +218,44 @@ class Recognizer extends EventEmitter
     code = item.code
     if code.indexOf('http://')==-1
       if item.type == 'I2/5'
-        code = item.code.substring(0,item.code.length-1)
+        code = code.substring(0,code.length-1)
 
       if typeof @barcodesHash[ code ] == 'undefined'
         @barcodesHash[ code ] = item.type
-        @barcodes.push item.code.substring(0,item.code.length-1)
+        @barcodes.push code #code.substring(0,item.code.length-1)
 
   getBarcode: (item)->
-    r = item.rect
-    cropped = @image.crop r.x,r.y,r.width,r.height
-    #cropped = cropped.threshold 40,90
-    #cropped.equalizeHist()
+    #
+
+    # todo: repeat with other values
+    if @barcodes.length==0
+
+      r = item.rect
+      cropped = @image.crop r.x,r.y,r.width,r.height
+      #cropped = cropped.threshold 40,90
+      #cropped.equalizeHist()
 
 
-    xocr.SetMatrix cropped
-    if @debug
-      @show cropped
-    imagecodes = xocr.GetBarcode()
-    (@appendBarcodes codes for codes in imagecodes)
-    xocr.free()
+      xocr.SetMatrix cropped
+      if @debug
+        @show cropped
+      imagecodes = xocr.GetBarcode()
+      (@appendBarcodes codes for codes in imagecodes)
+      xocr.free()
+
+    # todo: repeat with other values
+    if @barcodes.length==0
+      r = item.rect
+      cropped = @barcode_image.clone()
+      cropped = cropped.threshold 90,160
+      cropped.equalizeHist()
+
+      xocr.SetMatrix cropped
+      if @debug
+        @show cropped
+      imagecodes = xocr.GetBarcode()
+      (@appendBarcodes codes for codes in imagecodes)
+      xocr.free()
 
   contours: (im_canny,lowThresh,highThresh,nIters)->
 
@@ -273,17 +291,44 @@ class Recognizer extends EventEmitter
   barcodeOriginal: (cb)->
     me = @
     codes = []
-    console.log @fileName
+    #console.log @fileName
     child = spawn('zbarimg',[@fileName])
     child.stdout.on 'data', (data) ->
       codeparts = data.toString().replace(/\n/,'').split(':')
       if codeparts.length==2
         codes.push codeparts[1]
     child.stderr.on 'data', (data) ->
-      console.log data.toString()
+      #console.log data.toString()
     child.on 'exit', (code) ->
       me.barcodes = codes
       cb codes
+
+  barcodeOriginalBarDecode: (cb)->
+    me = @
+    codes = []
+    child = spawn('bardecode',[@fileName])
+    child.stdout.on 'data', (data) ->
+      #bardecode /imagedata/04112015.2/good/010010195154820.tiff
+      #0100101951548207 [type: code25i at: (986,3848)]
+      #100009171692 [type: code25i at: (448,27)]
+      #100009171739 [type: code25i at: (2292,0)]
+      codeLines = data.toString().split(/\n/)
+      for line in codeLines
+        codeparts = line.split(" ")
+        if codeparts.length>2
+          if codeparts[2]=='code25i'
+            debug 'found code25i',codeparts[0].substring(0,codeparts[0].length-1)
+            codes.push codeparts[0].substring(0,codeparts[0].length-1)
+          else
+            debug 'found code',codeparts[0]
+            codes.push codeparts[0]
+
+    child.stderr.on 'data', (data) ->
+      #console.log data.toString()
+    child.on 'exit', (code) ->
+      me.barcodes = codes
+      cb codes
+
 
   barcode: (sep)->
     if typeof @barcode_image == 'undefined'
@@ -301,7 +346,7 @@ class Recognizer extends EventEmitter
     if @barcodes.length==0
       xocr.SetMatrix @barcode_image
       imagecodes = xocr.GetBarcode()
-      console.log 'imagecodes',imagecodes
+      #console.log 'imagecodes',imagecodes
       (@appendBarcodes codes for codes in imagecodes)
       xocr.free()
 
@@ -458,22 +503,34 @@ class Recognizer extends EventEmitter
     @addresses
 
   processList: (index) ->
+    me = @
     if typeof index=='undefined'
       index=-1
     if index==-1
-      @barcode()
 
-      if @barcodes.length==0
-        fn=(codes)->
-          @barcodes = codes
-          @processList index+1
-        @barcodeOriginal fn.bind(@)
+      #console.log(me.barcodes)
+      if me.barcodes.length==0
+        bfn = (codes)->
+          me.barcodes = codes
+
+          if me.barcodes.length==0
+            me.barcode()
+
+          if me.barcodes.length==0
+            fn=(codes)->
+              me.barcodes = codes
+              me.processList index+1
+            me.barcodeOriginal fn.bind(@)
+          else
+            me.processList index+1
+
+        me.barcodeOriginalBarDecode bfn.bind(@)
       else
-        @processList index+1
+        me.processList index+1
     else if index >= @process_list.length
       @emit 'boxes', [], @barcodes
     else
-      console.log 'processList', index ,@process_list.length , @process_list[index]
+      #console.log 'processList', index ,@process_list.length , @process_list[index]
       @textMethod @process_list[index]
       @once 'internalboxes', (res,codes) ->
         if typeof res!='undefined' and res.length > 0 and typeof res[0].box!='undefined' and res[0].box.length == 1
@@ -520,7 +577,7 @@ class Recognizer extends EventEmitter
 
   findSortbox: (item)->
     me = @
-    searchtext = item.street+', '+item.zipCode+' '+item.town
+    searchtext = item.street+' '+item.zipCode+' '+item.town
     housenumber= item.housenumber
     @db.once 'sortbox', (res) ->
       item.box = res

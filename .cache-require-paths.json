@@ -1,0 +1,1036 @@
+{
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/bcocr.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "cluster": "cluster",
+    "glob": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "path": "path",
+    "fs": "fs",
+    "../classes/cwatchermaster": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/cwatchermaster.js",
+    "../classes/db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js",
+    "../classes/extract": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/extract.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js",
+    "child_process": "child_process"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js": {
+    "fs": "fs",
+    "minimatch": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/minimatch.js",
+    "inherits": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/inherits/inherits.js",
+    "events": "events",
+    "path": "path",
+    "assert": "assert",
+    "path-is-absolute": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/path-is-absolute/index.js",
+    "./sync.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/sync.js",
+    "./common.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/common.js",
+    "inflight": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/inflight/inflight.js",
+    "util": "util",
+    "once": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/once/once.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/minimatch.js": {
+    "path": "path",
+    "brace-expansion": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/index.js": {
+    "concat-map": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/concat-map/index.js",
+    "balanced-match": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/inherits/inherits.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/sync.js": {
+    "fs": "fs",
+    "minimatch": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/minimatch.js",
+    "./glob.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "util": "util",
+    "path": "path",
+    "assert": "assert",
+    "path-is-absolute": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/path-is-absolute/index.js",
+    "./common.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/common.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/common.js": {
+    "path": "path",
+    "minimatch": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/minimatch/minimatch.js",
+    "path-is-absolute": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/path-is-absolute/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/inflight/inflight.js": {
+    "wrappy": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/inflight/node_modules/wrappy/wrappy.js",
+    "once": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/once/once.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/once/once.js": {
+    "wrappy": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/node_modules/once/node_modules/wrappy/wrappy.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/cwatchermaster.js": {
+    "events": "events",
+    "path": "path",
+    "fs": "fs",
+    "glob": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "../classes/io": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/io.js",
+    "socket.io-client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/index.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "./db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js",
+    "./erp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/erp.js",
+    "udpfindme": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/main.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/io.js": {
+    "events": "events",
+    "path": "path",
+    "fs": "fs",
+    "glob": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "socket.io": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/index.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js",
+    "../classes/erp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/erp.js",
+    "opencv": "/Users/thomashoffmann/Documents/Projects/node/node-opencv/lib/opencv.js",
+    "udpfindme": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/main.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/index.js": {
+    "./lib": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/index.js": {
+    "http": "http",
+    "fs": "fs",
+    "url": "url",
+    "engine.io": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/engine.io.js",
+    "socket.io-client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/index.js",
+    "socket.io-client/package": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/package.json",
+    "./client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/client.js",
+    "./namespace": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/namespace.js",
+    "socket.io-adapter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/engine.io.js": {
+    "http": "http",
+    "./server": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/server.js",
+    "./socket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/socket.js",
+    "./transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transport.js",
+    "./transports": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/index.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/server.js": {
+    "querystring": "querystring",
+    "url": "url",
+    "fs": "fs",
+    "crypto": "crypto",
+    "base64id": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/base64id/lib/base64id.js",
+    "./transports": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/index.js",
+    "events": "events",
+    "./socket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/socket.js",
+    "ws": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/base64id/lib/base64id.js": {
+    "crypto": "crypto"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/index.js": {
+    "./polling-xhr": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling-xhr.js",
+    "./polling-jsonp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling-jsonp.js",
+    "./websocket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/websocket.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling-xhr.js": {
+    "./polling": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling.js",
+    "../transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transport.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling.js": {
+    "../transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transport.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transport.js": {
+    "events": "events",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/index.js": {
+    "./lib/": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/lib/index.js": {
+    "utf8": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/node_modules/utf8/utf8.js",
+    "after": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/node_modules/after/index.js",
+    "./keys": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/lib/keys.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js": {
+    "tty": "tty",
+    "util": "util",
+    "./debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/debug.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/debug.js": {
+    "ms": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node_modules/ms/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling-jsonp.js": {
+    "./polling": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/polling.js",
+    "querystring": "querystring"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transports/websocket.js": {
+    "../transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/transport.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/lib/socket.js": {
+    "events": "events",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/index.js": {
+    "./lib/WebSocket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/WebSocket.js",
+    "./lib/WebSocketServer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/WebSocketServer.js",
+    "./lib/Sender": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Sender.js",
+    "./lib/Receiver": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Receiver.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/WebSocket.js": {
+    "url": "url",
+    "util": "util",
+    "http": "http",
+    "https": "https",
+    "crypto": "crypto",
+    "stream": "stream",
+    "ultron": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/node_modules/ultron/index.js",
+    "options": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/node_modules/options/lib/options.js",
+    "./Sender": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Sender.js",
+    "./Receiver": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Receiver.js",
+    "./Sender.hixie": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Sender.hixie.js",
+    "./Receiver.hixie": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Receiver.hixie.js",
+    "events": "events"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/node_modules/options/lib/options.js": {
+    "fs": "fs"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Sender.js": {
+    "events": "events",
+    "util": "util",
+    "./ErrorCodes": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/ErrorCodes.js",
+    "./BufferUtil": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/BufferUtil.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/BufferUtil.js": {
+    "../build/Release/bufferutil": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/build/Release/bufferutil.node",
+    "./BufferUtil.fallback": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/BufferUtil.fallback.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Receiver.js": {
+    "util": "util",
+    "./Validation": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Validation.js",
+    "./ErrorCodes": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/ErrorCodes.js",
+    "./BufferPool": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/BufferPool.js",
+    "./BufferUtil": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/BufferUtil.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Validation.js": {
+    "../build/Release/validation": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/build/Release/validation.node",
+    "./Validation.fallback": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Validation.fallback.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/BufferPool.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Sender.hixie.js": {
+    "events": "events",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/Receiver.hixie.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/WebSocketServer.js": {
+    "util": "util",
+    "events": "events",
+    "http": "http",
+    "crypto": "crypto",
+    "options": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/node_modules/options/lib/options.js",
+    "./WebSocket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/engine.io/node_modules/ws/lib/WebSocket.js",
+    "tls": "tls",
+    "url": "url"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/index.js": {
+    "./lib/": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/index.js": {
+    "./url": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/url.js",
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/index.js",
+    "./manager": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/manager.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/debug/lib/debug.js",
+    "./socket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/socket.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/url.js": {
+    "parseuri": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/parseuri/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/debug/lib/debug.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/debug/lib/debug.js": {
+    "tty": "tty"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/index.js": {
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/debug/lib/debug.js",
+    "json3": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/node_modules/json3/lib/json3.js",
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/node_modules/isarray/index.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-emitter/index.js",
+    "./binary": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/binary.js",
+    "./is-buffer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/is-buffer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/binary.js": {
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/node_modules/isarray/index.js",
+    "./is-buffer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/is-buffer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/manager.js": {
+    "./url": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/url.js",
+    "engine.io-client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/index.js",
+    "./socket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/socket.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-emitter/index.js",
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/index.js",
+    "./on": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/on.js",
+    "component-bind": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-bind/index.js",
+    "object-component": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/object-component/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/debug/lib/debug.js",
+    "indexof": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/indexof/index.js",
+    "backo2": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/backo2/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/index.js": {
+    "./lib/": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/index.js": {
+    "./socket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/socket.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/socket.js": {
+    "./transports": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/index.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-emitter/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/node.js",
+    "indexof": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/indexof/index.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/index.js",
+    "parseuri": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/parseuri/index.js",
+    "parsejson": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/parsejson/index.js",
+    "parseqs": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/parseqs/index.js",
+    "./transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transport.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/index.js": {
+    "xmlhttprequest": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/xmlhttprequest/lib/XMLHttpRequest.js",
+    "./polling-xhr": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling-xhr.js",
+    "./polling-jsonp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling-jsonp.js",
+    "./websocket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/websocket.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/xmlhttprequest/lib/XMLHttpRequest.js": {
+    "fs": "fs",
+    "url": "url",
+    "child_process": "child_process",
+    "http": "http",
+    "https": "https"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling-xhr.js": {
+    "xmlhttprequest": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/xmlhttprequest/lib/XMLHttpRequest.js",
+    "./polling": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-emitter/index.js",
+    "component-inherit": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/component-inherit/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling.js": {
+    "../transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transport.js",
+    "parseqs": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/parseqs/index.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/index.js",
+    "component-inherit": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/component-inherit/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/node.js",
+    "xmlhttprequest": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/xmlhttprequest/lib/XMLHttpRequest.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transport.js": {
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/index.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-emitter/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/index.js": {
+    "./lib/": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/lib/index.js": {
+    "utf8": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/node_modules/utf8/utf8.js",
+    "after": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/node_modules/after/index.js",
+    "./keys": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/lib/keys.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/node.js": {
+    "tty": "tty",
+    "util": "util",
+    "./debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/debug.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/debug.js": {
+    "ms": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/node_modules/ms/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling-jsonp.js": {
+    "./polling": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/polling.js",
+    "component-inherit": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/component-inherit/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transports/websocket.js": {
+    "../transport": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/lib/transport.js",
+    "engine.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/engine.io-parser/index.js",
+    "parseqs": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/parseqs/index.js",
+    "component-inherit": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/component-inherit/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/debug/node.js",
+    "ws": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/index.js": {
+    "./lib/WebSocket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/WebSocket.js",
+    "./lib/WebSocketServer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/WebSocketServer.js",
+    "./lib/Sender": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Sender.js",
+    "./lib/Receiver": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Receiver.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/WebSocket.js": {
+    "util": "util",
+    "events": "events",
+    "http": "http",
+    "https": "https",
+    "crypto": "crypto",
+    "url": "url",
+    "fs": "fs",
+    "options": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/node_modules/options/lib/options.js",
+    "./Sender": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Sender.js",
+    "./Receiver": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Receiver.js",
+    "./Sender.hixie": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Sender.hixie.js",
+    "./Receiver.hixie": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Receiver.hixie.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/node_modules/options/lib/options.js": {
+    "fs": "fs"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Sender.js": {
+    "events": "events",
+    "util": "util",
+    "./ErrorCodes": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/ErrorCodes.js",
+    "./BufferUtil": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/BufferUtil.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/BufferUtil.js": {
+    "./BufferUtil.fallback": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/BufferUtil.fallback.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Receiver.js": {
+    "util": "util",
+    "./Validation": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Validation.js",
+    "./ErrorCodes": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/ErrorCodes.js",
+    "./BufferPool": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/BufferPool.js",
+    "./BufferUtil": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/BufferUtil.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Validation.js": {
+    "./Validation.fallback": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Validation.fallback.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/BufferPool.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Sender.hixie.js": {
+    "events": "events",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/Receiver.hixie.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/WebSocketServer.js": {
+    "util": "util",
+    "events": "events",
+    "http": "http",
+    "crypto": "crypto",
+    "url": "url",
+    "options": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/node_modules/options/lib/options.js",
+    "./WebSocket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/ws/lib/WebSocket.js",
+    "tls": "tls"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/socket.js": {
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/socket.io-parser/index.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-emitter/index.js",
+    "to-array": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/to-array/index.js",
+    "./on": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/lib/on.js",
+    "component-bind": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/component-bind/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/debug/lib/debug.js",
+    "has-binary": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/has-binary/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/has-binary/index.js": {
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/node_modules/has-binary/node_modules/isarray/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/client.js": {
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/node.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/index.js": {
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/node_modules/debug/lib/debug.js",
+    "json3": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/node_modules/json3/lib/json3.js",
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/node_modules/isarray/index.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/node_modules/component-emitter/index.js",
+    "./binary": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/binary.js",
+    "./is-buffer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/is-buffer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/node_modules/debug/lib/debug.js": {
+    "tty": "tty"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/binary.js": {
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/node_modules/isarray/index.js",
+    "./is-buffer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/is-buffer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/node.js": {
+    "tty": "tty",
+    "util": "util",
+    "./debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/debug.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/debug.js": {
+    "ms": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/node_modules/ms/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/namespace.js": {
+    "./socket": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/socket.js",
+    "events": "events",
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/index.js",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/node.js",
+    "has-binary-data": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/has-binary-data/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/lib/socket.js": {
+    "events": "events",
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-parser/index.js",
+    "url": "url",
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/debug/node.js",
+    "has-binary-data": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/has-binary-data/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/has-binary-data/index.js": {
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/has-binary-data/node_modules/isarray/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/index.js": {
+    "object-keys": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/object-keys/index.js",
+    "events": "events",
+    "socket.io-parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/object-keys/index.js": {
+    "./isArguments": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/object-keys/isArguments.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/index.js": {
+    "debug": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/node_modules/debug/lib/debug.js",
+    "json3": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/node_modules/json3/lib/json3.js",
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/node_modules/isarray/index.js",
+    "component-emitter": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/node_modules/component-emitter/index.js",
+    "./binary": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/binary.js",
+    "./is-buffer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/is-buffer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/node_modules/debug/lib/debug.js": {
+    "tty": "tty"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/binary.js": {
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/node_modules/isarray/index.js",
+    "./is-buffer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io/node_modules/socket.io-adapter/node_modules/socket.io-parser/is-buffer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/erp.js": {
+    "request": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/index.js",
+    "events": "events",
+    "udpfindme": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/main.js",
+    "socket.io-client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/index.js": {
+    "util": "util",
+    "./lib/cookies": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/cookies.js",
+    "./lib/helpers": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/helpers.js",
+    "./request": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/request.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/cookies.js": {
+    "tough-cookie": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/cookie.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/cookie.js": {
+    "net": "net",
+    "url": "url",
+    "./pubsuffix": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/pubsuffix.js",
+    "./store": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/store.js",
+    "./memstore": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/memstore.js",
+    "./pathMatch": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/pathMatch.js",
+    "punycode": "punycode",
+    "./permuteDomain": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/permuteDomain.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/pubsuffix.js": {
+    "punycode": "punycode"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/memstore.js": {
+    "./store": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/store.js",
+    "./permuteDomain": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/permuteDomain.js",
+    "./pathMatch": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/pathMatch.js",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/permuteDomain.js": {
+    "./pubsuffix": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tough-cookie/lib/pubsuffix.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/helpers.js": {
+    "json-stringify-safe": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/json-stringify-safe/stringify.js",
+    "crypto": "crypto"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/request.js": {
+    "http": "http",
+    "https": "https",
+    "url": "url",
+    "util": "util",
+    "stream": "stream",
+    "zlib": "zlib",
+    "./lib/helpers": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/helpers.js",
+    "bl": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/bl.js",
+    "hawk": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/index.js",
+    "aws-sign2": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/aws-sign2/index.js",
+    "http-signature": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/index.js",
+    "mime-types": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/mime-types/index.js",
+    "tunnel-agent": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tunnel-agent/index.js",
+    "stringstream": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/stringstream/stringstream.js",
+    "caseless": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/caseless/index.js",
+    "forever-agent": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/forever-agent/index.js",
+    "form-data": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/lib/form_data.js",
+    "./lib/cookies": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/cookies.js",
+    "./lib/copy": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/copy.js",
+    "./lib/getProxyFromURI": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/getProxyFromURI.js",
+    "./lib/querystring": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/querystring.js",
+    "./lib/har": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/har.js",
+    "./lib/auth": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/auth.js",
+    "./lib/oauth": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/oauth.js",
+    "./lib/multipart": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/multipart.js",
+    "./lib/redirect": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/redirect.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/bl.js": {
+    "readable-stream/duplex": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/duplex.js",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/duplex.js": {
+    "./lib/_stream_duplex.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/lib/_stream_duplex.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/lib/_stream_duplex.js": {
+    "core-util-is": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/core-util-is/lib/util.js",
+    "inherits": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/inherits/inherits.js",
+    "./_stream_readable": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/lib/_stream_readable.js",
+    "./_stream_writable": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/lib/_stream_writable.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/inherits/inherits.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/lib/_stream_readable.js": {
+    "isarray": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/isarray/index.js",
+    "buffer": "buffer",
+    "events": "events",
+    "stream": "stream",
+    "core-util-is": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/core-util-is/lib/util.js",
+    "inherits": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/inherits/inherits.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/lib/_stream_writable.js": {
+    "buffer": "buffer",
+    "core-util-is": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/core-util-is/lib/util.js",
+    "inherits": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/bl/node_modules/readable-stream/node_modules/inherits/inherits.js",
+    "stream": "stream"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/index.js": {
+    "./lib": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/index.js": {
+    "boom": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/index.js",
+    "sntp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/sntp/index.js",
+    "./server": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/server.js",
+    "./client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/client.js",
+    "./crypto": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/crypto.js",
+    "./utils": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/utils.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/index.js": {
+    "./lib": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/lib/index.js": {
+    "http": "http",
+    "hoek": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/index.js": {
+    "./lib": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/lib/index.js": {
+    "crypto": "crypto",
+    "path": "path",
+    "util": "util",
+    "./escape": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/lib/escape.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/sntp/index.js": {
+    "./lib": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/sntp/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/sntp/lib/index.js": {
+    "dgram": "dgram",
+    "dns": "dns",
+    "hoek": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/server.js": {
+    "boom": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/index.js",
+    "hoek": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/index.js",
+    "cryptiles": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/cryptiles/index.js",
+    "./crypto": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/crypto.js",
+    "./utils": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/utils.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/cryptiles/index.js": {
+    "./lib": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/cryptiles/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/cryptiles/lib/index.js": {
+    "crypto": "crypto",
+    "boom": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/crypto.js": {
+    "crypto": "crypto",
+    "url": "url",
+    "./utils": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/utils.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/utils.js": {
+    "sntp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/sntp/index.js",
+    "boom": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/boom/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/client.js": {
+    "url": "url",
+    "hoek": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/hoek/index.js",
+    "cryptiles": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/node_modules/cryptiles/index.js",
+    "./crypto": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/crypto.js",
+    "./utils": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/hawk/lib/utils.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/aws-sign2/index.js": {
+    "crypto": "crypto",
+    "url": "url"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/index.js": {
+    "./parser": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/parser.js",
+    "./signer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/signer.js",
+    "./verify": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/verify.js",
+    "./util": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/util.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/parser.js": {
+    "assert-plus": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/assert-plus/assert.js",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/assert-plus/assert.js": {
+    "assert": "assert",
+    "stream": "stream",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/signer.js": {
+    "assert-plus": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/assert-plus/assert.js",
+    "crypto": "crypto",
+    "http": "http",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/verify.js": {
+    "assert-plus": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/assert-plus/assert.js",
+    "crypto": "crypto"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/lib/util.js": {
+    "assert-plus": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/assert-plus/assert.js",
+    "crypto": "crypto",
+    "asn1": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/index.js",
+    "ctype": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/ctype/ctype.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/index.js": {
+    "./ber/index": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/index.js": {
+    "./errors": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/errors.js",
+    "./types": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/types.js",
+    "./reader": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/reader.js",
+    "./writer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/writer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/reader.js": {
+    "assert": "assert",
+    "./types": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/types.js",
+    "./errors": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/errors.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/writer.js": {
+    "assert": "assert",
+    "./types": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/types.js",
+    "./errors": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/errors.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/ctype/ctype.js": {
+    "./ctf.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/ctype/ctf.js",
+    "./ctio.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/ctype/ctio.js",
+    "assert": "assert"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/ctype/ctf.js": {
+    "assert": "assert"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/http-signature/node_modules/ctype/ctio.js": {
+    "assert": "assert"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/mime-types/index.js": {
+    "mime-db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/mime-types/node_modules/mime-db/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/mime-types/node_modules/mime-db/index.js": {
+    "./db.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/mime-types/node_modules/mime-db/db.json"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/tunnel-agent/index.js": {
+    "net": "net",
+    "tls": "tls",
+    "http": "http",
+    "https": "https",
+    "events": "events",
+    "assert": "assert",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/stringstream/stringstream.js": {
+    "util": "util",
+    "stream": "stream",
+    "string_decoder": "string_decoder"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/forever-agent/index.js": {
+    "util": "util",
+    "http": "http",
+    "net": "net",
+    "tls": "tls",
+    "https": "https"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/lib/form_data.js": {
+    "combined-stream": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/node_modules/combined-stream/lib/combined_stream.js",
+    "util": "util",
+    "path": "path",
+    "http": "http",
+    "https": "https",
+    "url": "url",
+    "fs": "fs",
+    "mime-types": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/mime-types/index.js",
+    "async": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/node_modules/combined-stream/lib/combined_stream.js": {
+    "util": "util",
+    "stream": "stream",
+    "delayed-stream": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/node_modules/combined-stream/node_modules/delayed-stream/lib/delayed_stream.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/form-data/node_modules/combined-stream/node_modules/delayed-stream/lib/delayed_stream.js": {
+    "stream": "stream",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/querystring.js": {
+    "qs": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/index.js",
+    "querystring": "querystring"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/index.js": {
+    "./lib/": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/index.js": {
+    "./stringify": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/stringify.js",
+    "./parse": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/parse.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/stringify.js": {
+    "./utils": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/utils.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/parse.js": {
+    "./utils": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/lib/utils.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/har.js": {
+    "fs": "fs",
+    "querystring": "querystring",
+    "har-validator": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/index.js",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/index.js": {
+    "./schemas": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/index.js",
+    "./error": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/error.js",
+    "is-my-json-valid": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/index.js": {
+    "./cache.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/cache.json",
+    "./cacheEntry.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/cacheEntry.json",
+    "./content.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/content.json",
+    "./cookie.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/cookie.json",
+    "./creator.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/creator.json",
+    "./entry.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/entry.json",
+    "./har.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/har.json",
+    "./log.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/log.json",
+    "./page.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/page.json",
+    "./pageTimings.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/pageTimings.json",
+    "./postData.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/postData.json",
+    "./record.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/record.json",
+    "./request.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/request.json",
+    "./response.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/response.json",
+    "./timings.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/src/schemas/timings.json"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/index.js": {
+    "generate-object-property": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/generate-object-property/index.js",
+    "generate-function": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/generate-function/index.js",
+    "jsonpointer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/jsonpointer/jsonpointer.js",
+    "xtend": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/xtend/immutable.js",
+    "./formats": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/formats.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/generate-object-property/index.js": {
+    "is-property": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/generate-object-property/node_modules/is-property/is-property.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/generate-function/index.js": {
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/har-validator/node_modules/is-my-json-valid/node_modules/jsonpointer/jsonpointer.js": {
+    "console": "console"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/auth.js": {
+    "caseless": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/caseless/index.js",
+    "node-uuid": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/node-uuid/uuid.js",
+    "./helpers": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/helpers.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/oauth.js": {
+    "qs": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/qs/index.js",
+    "caseless": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/caseless/index.js",
+    "node-uuid": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/node-uuid/uuid.js",
+    "oauth-sign": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/oauth-sign/index.js",
+    "crypto": "crypto"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/oauth-sign/index.js": {
+    "crypto": "crypto",
+    "querystring": "querystring"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/multipart.js": {
+    "node-uuid": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/node-uuid/uuid.js",
+    "combined-stream": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/combined-stream/lib/combined_stream.js",
+    "isstream": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/isstream/isstream.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/combined-stream/lib/combined_stream.js": {
+    "util": "util",
+    "stream": "stream",
+    "delayed-stream": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/combined-stream/node_modules/delayed-stream/lib/delayed_stream.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/combined-stream/node_modules/delayed-stream/lib/delayed_stream.js": {
+    "stream": "stream",
+    "util": "util"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/node_modules/isstream/isstream.js": {
+    "stream": "stream"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/request/lib/redirect.js": {
+    "url": "url"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/main.js": {
+    "./message": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/message.js",
+    "./server": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/server.js",
+    "./client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/client.js",
+    "./discovery": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/discovery.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/server.js": {
+    "events": "events",
+    "dgram": "dgram",
+    "./message": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/message.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/client.js": {
+    "events": "events",
+    "dgram": "dgram",
+    "./message": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/message.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/discovery.js": {
+    "events": "events",
+    "dgram": "dgram",
+    "./client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/client.js",
+    "os": "os"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/Gruntfile.coffee": {
+    "./lib/commands/bounding.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/bounding.js",
+    "./lib/commands/cwatch.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/cwatch.js",
+    "./lib/commands/findtext.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/findtext.js",
+    "./lib/commands/housenumber.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/housenumber.js",
+    "./lib/commands/install.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/install.js",
+    "./lib/commands/ocrhash.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/ocrhash.js",
+    "./lib/commands/ocrsimulate.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/ocrsimulate.js",
+    "./lib/commands/sortbox.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/sortbox.js",
+    "./lib/commands/test.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/test.js",
+    "./lib/commands/variables.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/variables.js",
+    "./lib/commands/watch.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/watch.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/bounding.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/cwatch.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "cluster": "cluster",
+    "glob": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "path": "path",
+    "fs": "fs",
+    "../classes/cwatchermaster": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/cwatchermaster.js",
+    "../classes/db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/findtext.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/housenumber.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/extract": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/extract.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/install.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "path": "path",
+    "fs": "fs",
+    "os": "os",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/ocrhash.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/ocrsimulate.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "cluster": "cluster",
+    "glob": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "path": "path",
+    "fs": "fs",
+    "../classes/erp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/erp.js",
+    "../classes/db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/sortbox.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/test.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js",
+    "../classes/db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/variables.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/watch.js": {
+    "./command": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/command.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "../classes/watcher": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/watcher.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/watcher.js": {
+    "events": "events",
+    "path": "path",
+    "fs": "fs",
+    "glob": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/glob/glob.js",
+    "../classes/io": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/io.js",
+    "socket.io-client": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/socket.io-client/index.js",
+    "../variables": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/variables.js",
+    "./recognizer": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/recognizer.js",
+    "./db": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/db.js",
+    "./erp": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/classes/erp.js",
+    "udpfindme": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/udpfindme/lib/main.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/lib/coffeelint.js": {
+    "./ruleLoader": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/lib/ruleLoader.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/lib/ruleLoader.js": {
+    "path": "path",
+    "resolve": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/index.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/index.js": {
+    "./lib/core": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/core.js",
+    "./lib/async": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/async.js",
+    "./lib/sync": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/sync.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/core.js": {
+    "./core.json": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/core.json"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/async.js": {
+    "./core": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/core.js",
+    "fs": "fs",
+    "path": "path",
+    "./caller.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/caller.js",
+    "./node-modules-paths.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/node-modules-paths.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/node-modules-paths.js": {
+    "path": "path"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/sync.js": {
+    "./core": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/core.js",
+    "fs": "fs",
+    "path": "path",
+    "./caller.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/caller.js",
+    "./node-modules-paths.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/coffeelint/node_modules/resolve/lib/node-modules-paths.js"
+  },
+  "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/cli.js": {
+    "./commands/bounding.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/bounding.js",
+    "./commands/cwatch.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/cwatch.js",
+    "./commands/findtext.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/findtext.js",
+    "./commands/housenumber.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/housenumber.js",
+    "./commands/install.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/install.js",
+    "./commands/ocrhash.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/ocrhash.js",
+    "./commands/ocrsimulate.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/ocrsimulate.js",
+    "./commands/sortbox.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/sortbox.js",
+    "./commands/test.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/test.js",
+    "./commands/variables.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/variables.js",
+    "./commands/watch.js": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/lib/commands/watch.js",
+    "colors": "/Users/thomashoffmann/Documents/Projects/node/ocrservice/node_modules/colors/lib/index.js"
+  }
+}

@@ -31,9 +31,9 @@ class Sortbox extends Command
     recognizer.on 'error', (err) ->
       throw err
     recognizer.on 'open', (res) ->
-      recognizer.test()
+      recognizer.run()
     recognizer.on 'boxes', (res,codes) ->
-      console.log JSON.stringify(res,null,1)
+      console.log JSON.stringify(res,null,1), codes
       console.timeEnd "elapsed"
       db.connection.end()
 
