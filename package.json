@@ -11,7 +11,7 @@
     "ocrservice-barcode": "./bin/ocrservice-barcode",
     "ocrservice-variables": "./bin/ocrservice-variables"
   },
-  "version": "0.1.73",
+  "version": "0.1.82",
   "engines": {
     "node": ">=0.12.0"
   },

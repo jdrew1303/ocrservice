@@ -46,6 +46,7 @@ variables =
 
   OCR_OVERDRAW_BARCODES: 1
   OCR_IGNORE_STRING: "IIII:llll:mmm:nuvgn:vwvw:ii:oo:uu:Telefon:0361-43"
+  
   OCR_DB_NAME: "sorter"
   OCR_DB_USER: "root"
   OCR_DB_PASSWORD: ""

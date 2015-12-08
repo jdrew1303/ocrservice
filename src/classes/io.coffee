@@ -12,8 +12,7 @@ udpfindme = require 'udpfindme'
 # watching a directory for new files
 module.exports =
 class IO extends EventEmitter
-  constructor: (watcher)->
-    @watcher = watcher
+  constructor: ()->
     @io = socketIO()
     @io.on 'connection', (opt) => @onIncommingConnection(opt)
     @pathAddition = 'noaddress'
@@ -26,13 +25,44 @@ class IO extends EventEmitter
     @io.listen(variables.WEBSOCKET_PORT)
     @sendings = []
     @clients = {}
+    options =
+      key: 'io'
+      client: variables.ERP_CLIENT
+      login: variables.ERP_LOGIN
+      password: variables.ERP_PASSWORD
+    @erp = new ERP options
+
+    @erp.on 'loginError', (msg) => @onERPLoginError(msg)
+    @erp.on 'loginSuccess', (msg) => @onERPLoginSuccess(msg)
+    @erp.on 'put', (msg) => @onERPPut(msg)
+    @erp.on 'error', (msg) => @onERPError(msg)
+    @erp.on 'connect', (msg) => @onERPConnect(msg)
+    @erp.on 'disconnect', (msg) => @onERPDisconnect(msg)
+
+  onERPConnect: (msg) ->
+    debug 'erp login', '---'
+    @erp.login()
+
+  onERPDisconnect: () ->
+    debug 'erp disconnect', '---'
+    @run=false
+  onERPLoginError: (msg) ->
+    console.log msg
+  onERPLoginSuccess: (msg) ->
+    debug 'cmaster','login success'
     @emit('listen')
+  onERPPut: (msg) ->
+    process.nextTick @dispatchTask.bind(@)
+  onERPError: (msg) ->
+    console.error msg
 
   close: ()->
     @io.close()
 
-  setPath: (name) ->
-    @pathName = name
+  setPath: (noaddress,goodpath,badpath) ->
+    @noAddressPathName = noaddress
+    @goodPathName = goodpath
+    @badPathName = badpath
     @updateList()
 
   short: (name) ->
@@ -54,7 +84,7 @@ class IO extends EventEmitter
     me = @
     if me.pathName?
       options =
-        cwd: path.join(me.pathName, me.pathAddition)
+        cwd: path.join(me.noAddressPathName)
       pattern = variables.OCR_WATCH_PATTERN
 
       glob pattern, options, (err,matches) ->
@@ -84,18 +114,18 @@ class IO extends EventEmitter
       login: data.login
       password: data.password
     warn 'io line 82','fix me!'
-    socket.emit 'loginSuccess', @watcher.erp.sid
+    socket.emit 'loginSuccess', @erp.sid
     @sendLetter socket
 
   onBadLetter: (socket,data) ->
     me = @
-    file = path.join(me.pathName, me.pathAddition, data.id+'.tiff')
+    file = path.join(me.noAddressPathName, data.id+'.tiff')
     fs.exists file, (exists) ->
       if exists==true
-        fs.writeFile path.join(me.pathName, 'bad', path.basename(file)+'.txt'), JSON.stringify(data,null,2) , (err) ->
+        fs.writeFile path.join(me.badPathName, path.basename(file)+'.txt'), JSON.stringify(data,null,2) , (err) ->
           if err
             me.emit 'error', err
-        fs.rename file, path.join(me.pathName, 'bad', path.basename(file)), (err) ->
+        fs.rename file, path.join(me.badPathName, path.basename(file)), (err) ->
           if err
             me.emit 'error', err
     me.sendLetter socket
@@ -115,11 +145,11 @@ class IO extends EventEmitter
       zipCode: data.zipCode
       town: data.town
 
-    file = path.join(me.pathName, me.pathAddition, data.id+'.tiff')
+    file = path.join(me.noAddressPathName, data.id+'.tiff')
 
     fs.exists file, (exists) ->
       if exists==true
-        fs.rename file, path.join(me.pathName, 'good', path.basename(file)), (err) ->
+        fs.rename file, path.join(me.goodPathName, path.basename(file)), (err) ->
           if err
             socket.emit 'someerror', 'renaming'
             me.sendLetter socket
@@ -128,7 +158,7 @@ class IO extends EventEmitter
       else
         me.sendLetter socket
     debug 'io put',item
-    me.watcher.erp.put item
+    me.erp.put item
 
 
   onSkipLetter: (socket,data) ->
@@ -156,7 +186,7 @@ class IO extends EventEmitter
       if @sendings.length == 0
         @updateList()
 
-      name = path.join(me.pathName, me.pathAddition,data.id+'.tiff')
+      name = path.join(me.noAddressPathName,data.id+'.tiff')
       recognizer = new Recognizer
       recognizer.setDebug false
       recognizer.on 'error', (err) ->

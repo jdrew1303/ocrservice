@@ -1,4 +1,3 @@
-nodeModuleCache= require 'fast-boot'
 Command = require './command'
 variables = require '../variables'
 cluster = require 'cluster'
@@ -75,7 +74,7 @@ class CBcOcr extends Command
       @debug = true
 
     @usebardecode=false
-    if program.barcode
+    if program.bardecode
       @usebardecode=true
     codes = []
     box =
@@ -118,27 +117,94 @@ class CBcOcr extends Command
       setTimeout exitfn, 60000
       me = @
       process.on 'message', (msg) ->
-        me.filename = path.join @pathname, msg
-        if not fs.existsSync(@filename)
+        me.filename = path.join me.pathname, msg
+        if not fs.existsSync(me.filename)
           process.exit()
         me.zbarimg()
 
   zbarimg: () ->
     zb    = spawn 'zbarimg', ['-q',@filename]
+    zb.on 'close', (code,signal) => @onZBarImageClose(code,signal)
     zb.stdout.on 'data', (data) => @onZBarImage(data)
     zb.stderr.on 'data', (data) => @onZBarImageError(data)
 
   bardecode: () ->
     if @usebardecode and @codes.length==0
       bd    = spawn 'bardecode', ['-c','8','-d','8',@filename]
+      bd.on 'close', (code,signal) => @onBarDecodeClose(code,signal)
       bd.stdout.on 'data', (data) => @onBarDecode(data)
       bd.stderr.on 'data', (data) => @onBarDecodeError(data)
     else
       @tesseract()
 
+  onNCRegonizer: (adrs,codes) ->
+    if codes.length==0
+      @onNoCode()
+    else if adrs.length>0
+      @codes=codes
+      @adressObject =
+        name: adrs[0].name
+        street: adrs[0].street
+        housenumber: adrs[0].housenumber
+        housenumberExtension: adrs[0].housenumberExtension
+        flatNumber: adrs[0].flatNumber
+        zipCode: adrs[0].zipCode
+        town: adrs[0].town
+        state: adrs[0].state
+        message: adrs[0].message
+        ocr_street: adrs[0].ocr_street
+        ocr_zipCode: adrs[0].ocr_zipCode
+        ocr_town: adrs[0].ocr_town
+        district: adrs[0].district
+      if adrs[0].box.length>0
+        @box =
+          strid: adrs[0].box[0].strid
+          mandant: adrs[0].box[0].mandant
+          regiogruppe: adrs[0].box[0].regiogruppe
+          bereich: adrs[0].box[0].bereich
+          sortiergang: adrs[0].box[0].sortiergang
+          sortierfach: adrs[0].box[0].sortierfach
+          plz: adrs[0].box[0].plz
+          ort: adrs[0].box[0].ort
+          ortsteil: adrs[0].box[0].ortsteil
+          hnvon: adrs[0].box[0].hnvon
+          hnbis: adrs[0].box[0].hnbis
+          zuvon: adrs[0].box[0].zuvon
+          zubis: adrs[0].box[0].zubis
+          gerade: adrs[0].box[0].gerade
+          ungerade: adrs[0].box[0].ungerade
+          strasse: adrs[0].box[0].strasse
+        @onGood()
+      else
+        @onNoBox()
+    else
+      @adressObject =
+        name: ''
+        street: ''
+        housenumber: ''
+        housenumberExtension: ''
+        flatNumber: ''
+        zipCode: ''
+        town: ''
+        state: ''
+        message: ''
+        ocr_street: ''
+        ocr_zipCode: ''
+        ocr_town: ''
+        district: ''
+      @codes=codes
+      @onNoAddress()
+
   tesseract: () ->
     if @codes.length==0
-      @onNoCode()
+      @db = new DB variables.OCR_DB_NAME, variables.OCR_DB_USER, variables.OCR_DB_PASSWORD, variables.OCR_DB_HOST
+      @recognizer = new Recognizer @db, @processlist
+      @recognizer.setDebug @debug||false
+      @recognizer.on 'error', (err) ->
+        throw err
+      @recognizer.on 'open', (res) => @recognizer.run(res)
+      @recognizer.on 'boxes', (adrs,codes) => @onNCRegonizer(adrs,codes)
+      @recognizer.open @filename, true
     else
       ts    = spawn 'tesseract', ['-l','deu','-psm','1',@filename,'stdout']
       ts.on 'data', (data) => @onTesseract(data)
@@ -153,10 +219,12 @@ class CBcOcr extends Command
         p[1] = p[1].substring(0,p[1].length-1)
       return p[1]
 
+  onZBarImageClose: (code,signal) ->
+    @bardecode()
+
   onZBarImage: (data) ->
     lines = data.toString().split(/\n/)
     (@codes.push(@getZBCode(line)) for line in lines when line.indexOf(':')>0)
-    @bardecode()
 
   onZBarImageError: (data) ->
     console.log data.toString()
@@ -169,12 +237,12 @@ class CBcOcr extends Command
         p[0] = p[0].substring(0,p[0].length-1)
       return p[0]
 
-  onBarDecode: (data) ->
-    console.log('using bardecode',data.toString())
-    lines = data.toString().split(/\n/)
-    (@codes.push(@getBDCode(line)) for line in lines)
-    console.log('bardecode result',@codes)
+  onBarDecodeClose: (code,signal) ->
     @tesseract()
+  onBarDecode: (data) ->
+    lines = data.toString().split(/\n/)
+    (@codes.push(@getBDCode(line)) for line in lines when line.indexOf('type')>0 )
+
   onBarDecodeError: (data) ->
     console.log data.toString()
 
@@ -277,29 +345,79 @@ class CBcOcr extends Command
     @db.connection.end()
 
   onNoCode: () ->
-    console.log 'No Code'
+    name = (new Date()).getTime()
+    moveFile @filename, path.join(@noCodePath,name+path.extname(@filename)), (err)->
+      process.exit()
+    console.log('nc')
     console.timeEnd('elapsed')
-    process.exit()
 
   onNoAddress: () ->
-    console.log 'No Address'
+    item = @adressObject
+    item.codes = @codes
+    box =
+      sortiergang: 'NA'
+      sortierfach: 'NA'
+      strid: -1
+      mandant: '6575'
+      regiogruppe: 'Standardbriefsendungen'
+      bereich: 'NA',
+      plz: ''
+      ort: ''
+      ortsteil: ''
+      hnvon: ''
+      hnbis: ''
+      gerade: ''
+      ungerade: ''
+      strasse: ''
+    item.box = [box]
+    process.send item
+    name = (@codes.join('.')).replace(/[^0-9a-z\.]/gi,'')+".NA"
+    moveFile @filename, path.join(@noAddressPath,name+path.extname(@filename)), (err)->
+      process.exit()
+    console.log('na')
     console.timeEnd('elapsed')
-    process.exit()
 
   onNoBox: () ->
-    console.log 'NT'
+    item = @adressObject
+    item.codes = @codes
+    box =
+      sortiergang: 'NT'
+      sortierfach: 'NT'
+      strid: -1
+      mandant: '6575'
+      regiogruppe: 'Standardbriefsendungen'
+      bereich: 'NT',
+      plz: @adressObject.zipCode
+      ort: @adressObject.town
+      ortsteil: @adressObject.district
+      hnvon: ''
+      hnbis: ''
+      gerade: ''
+      ungerade: ''
+      strasse: @adressObject.street
+    item.box = [box]
+    process.send item
+    name = (@codes.join('.')).replace(/[^0-9a-z\.]/gi,'')+".NT"
+    moveFile @filename, path.join(@noAddressPath,name+path.extname(@filename)), (err)->
+      process.exit()
+    console.log('nt')
     console.timeEnd('elapsed')
-    process.exit()
 
   onGood: () ->
-    console.log 'OK'
-    console.log('onGood',@adressObject)
-    console.log('onGood',@box)
-    #process.send res[0]
+    item = @adressObject
+    item.codes = @codes
+    item.box = [@box]
+    process.send item
+    name = (@codes.join('.')).replace(/[^0-9a-z\.]/gi,'')
+    moveFile @filename, path.join(@goodPath,name+path.extname(@filename)), (err)->
+      process.exit()
+    console.log('good')
     console.timeEnd('elapsed')
-    process.exit()
 
   onMoreBoxes: () ->
     console.log 'unclear'
+    name = (@codes.join('.')).replace(/[^0-9a-z\.]/gi,'')
+    moveFile @filename, path.join(@badPath,name+path.extname(@filename)), (err)->
+      process.exit()
     console.timeEnd('elapsed')
     process.exit()

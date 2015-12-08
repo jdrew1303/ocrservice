@@ -1,0 +1,61 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides: ocrservice
+# Required-Start: $remote_fs $syslog
+# Required-Stop: $remote_fs $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: ocrservice
+# Description: This file starts and stops ocrservice
+#
+### END INIT INFO
+
+export GRAB_PATH=/tmp/
+
+export ERP_LOGIN="erplogin"
+export ERP_PASSWORD="erppass"
+export ERP_CLIENT="erpclient"
+
+export OCR_DB_NAME="sorter"
+export OCR_DB_USER="sorter"
+export OCR_DB_PASSWORD="sorter"
+export OCR_DB_HOST="localhost"
+
+
+export OCR_IMAGE_WIDTH_SCALE=1.6
+export OCR_IMAGE_HEIGHT_SCALE=1
+
+export OCRSERVICE_USER=jondoe
+export OCRSERVICE_HOME=/usr/lib/node_modules/ocrservice
+export OCRSERVICE_PID=/var/run/ocrservice.pid
+
+
+case "$1" in
+ start)
+   start-stop-daemon --start --chdir $OCRSERVICE_HOME --quiet --chuid $OCRSERVICE_USER    \
+    --make-pidfile --pidfile $OCRSERVICE_PID --background       \
+    --startas /bin/bash -- -c "exec node $OCRSERVICE_HOME/index.js > /var/log/ocrservice.log 2>&1"
+   ;;
+ stop)
+   start-stop-daemon --stop --pidfile $OCRSERVICE_PID
+   ;;
+ restart)
+   start-stop-daemon --stop --pidfile $OCRSERVICE_PID
+   sleep 1
+   start-stop-daemon --start --chdir $OCRSERVICE_HOME --quiet --chuid $OCRSERVICE_USER    \
+    --make-pidfile --pidfile $OCRSERVICE_PID --background       \
+    --startas /bin/bash -- -c "exec node $OCRSERVICE_HOME/index.js > /var/log/ocrservice.log 2>&1"
+   ;;
+ *)
+   echo "Usage: server-service {start|stop|restart}" >&2
+   exit 3
+   ;;
+esac
+
+# HINTS
+# place this file in /etc/init.d
+#
+# make it executeable
+# > sudo chmod a+x server-service
+# register as init script
+# > sudo update-rc.d server-service defaults

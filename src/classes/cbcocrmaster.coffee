@@ -66,6 +66,7 @@ class CBcOcrMaster extends EventEmitter
     if @quick
       @start() # start without updateing the db
     else
+      debug 'cmaster','query fast access'
       @erp.fastaccess()
   onERPPut: (msg) ->
     process.nextTick @dispatchTask.bind(@)

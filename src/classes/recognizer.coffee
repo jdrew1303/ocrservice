@@ -43,6 +43,7 @@ module.exports =
 class Recognizer extends EventEmitter
 
   constructor: (db, process_list)->
+    @setMaxListeners 100
     @showCounter=0
     @imageArea = 0
     @rectDebugIndex = 0
